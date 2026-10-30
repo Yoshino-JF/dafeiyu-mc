@@ -19,7 +19,7 @@ bots/DaFeiYu/
 ## 需要准备
 
 - Windows 10 或 11，装有 Microsoft Edge WebView2 Runtime（Windows 11 自带）。
-- 一个 Minecraft Java 版 26.1.2 服务器：用你自己的，或者在启动器的“我的世界”里新建一个本地世界。本地世界不用另装 Java，发布包里带了服务器核心（Paper）和 Java 25；第一次启动世界时会联网下载一次 Minecraft 官方服务器文件（约 1–3 分钟），之后不再下载。
+- 一个 Minecraft Java 版 26.1.2 服务器：用你自己的，或者在启动器的“我的世界”里新建一个本地世界。本地世界不用另装 Java，发布包里带了服务器核心（Paper）和 Java 25；启动器一打开就会在后台下载一次 Minecraft 官方服务器文件（官方源慢或连不上时自动换 BMCLAPI 镜像），通常在你填完设置之前就好了，之后不再下载。
 - 一个 DeepSeek API Key（她用 DeepSeek 思考和说话）。
 - 可选：阿里云百炼的 API Key。填了以后她能语音播报、你能按住鼠标侧键跟她说话，她挑参考对话也会用上千问向量，更贴合当下；不填就只用 DeepSeek，照样能玩。
 

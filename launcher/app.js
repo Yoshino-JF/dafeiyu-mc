@@ -166,6 +166,7 @@ async function refresh() {
     const worldName = config.connectionMode==='local' ? worldUI.selectedName() : (config.host ? config.host+(config.port ? ':'+config.port : '') : '');
     $('#home-world-name').textContent=worldName; $('#home-world-name').hidden=!worldName;
     if(!s.running&&s.world?.running){$('#status').textContent=s.world.message;$('#side-state').textContent='本地服务器运行中';}
+    const eng=s.world?.engine;if(!s.running&&!s.world?.running&&(eng?.phase==='downloading'||eng?.phase==='patching')){$('#status').textContent=eng.phase==='downloading'?`${eng.message} ${eng.percent||0}%`:eng.message;}   // the server core being fetched in the background (owner 10-31)
     $('#vitals').hidden = !(inGame && st);
     if (inGame && st) {
       $('#v-health').textContent = `${st.health} / 20`; $('#v-food').textContent = `${st.hunger} / 20`;

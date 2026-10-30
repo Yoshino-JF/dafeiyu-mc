@@ -28,6 +28,7 @@ function said(who,text){chat.push({at:Date.now(),who,text:redact(text)});if(chat
 function redact(s){let t=String(s);for(const v of Object.values(keys()))if(typeof v==='string'&&v.length>6)t=t.split(v).join('[已隐藏]');return t.replace(/Bearer\s+\S+/gi,'Bearer [已隐藏]');}
 function log(s){for(const l of redact(s).split(/\r?\n/).filter(Boolean)){lines.push(l);if(lines.length>100)lines.shift();fs.appendFileSync(path.join(runtime,'launcher.log'),l+'\n');}}
 const worlds=new WorldManager({root:dataRoot,sourceRoot:root,log});
+worlds.prepare().catch(()=>{});   // owner 10-31: the server core is fetched as soon as the launcher opens, not when the first world starts
 const coreRunning=()=>Boolean(core&&core.exitCode===null);
 function worldSelection(c){
  if(c.connectionMode!=='local')return c;

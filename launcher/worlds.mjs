@@ -4,6 +4,7 @@ import path from 'node:path';
 import net from 'node:net';
 import crypto from 'node:crypto';
 import {spawn} from 'node:child_process';
+import zlib from 'node:zlib';
 
 const META = 'launcher-world.json';
 const DATA = ['world', 'world_nether', 'world_the_end'];
@@ -24,6 +25,36 @@ function safeName(name) {
 }
 function inside(parent, child) { const r=path.relative(parent,child); return !!r && !r.startsWith('..'+path.sep) && r!=='..' && !path.isAbsolute(r); }
 function noLink(p) { if (exists(p) && fs.lstatSync(p).isSymbolicLink()) throw Error('此目录是链接，请选择实际存档文件夹。'); }
+/** One file out of a zip (a jar): Paper's META-INF/download-context names Mojang's file, its URL and SHA-256. */
+function zipEntry(file, name) {
+  try {
+    const b = fs.readFileSync(file), end = b.lastIndexOf(Buffer.from([0x50, 0x4b, 0x05, 0x06]));
+    if (end < 0) return null;
+    for (let i = 0, p = b.readUInt32LE(end + 16); i < b.readUInt16LE(end + 10); i++) {
+      const method = b.readUInt16LE(p + 10), size = b.readUInt32LE(p + 20), n = b.readUInt16LE(p + 28), x = b.readUInt16LE(p + 30), c = b.readUInt16LE(p + 32), at = b.readUInt32LE(p + 42);
+      if (b.toString('utf8', p + 46, p + 46 + n) === name) {
+        const data = b.subarray(at + 30 + b.readUInt16LE(at + 26) + b.readUInt16LE(at + 28)).subarray(0, size);
+        return method === 0 ? data : method === 8 ? zlib.inflateRawSync(data) : null;
+      }
+      p += 46 + n + x + c;
+    }
+  } catch { /* not a readable jar */ }
+  return null;
+}
+/** Download to a file. With watch, give up when after 10 s it averages under 300 KB/s, so the next source is tried. */
+async function download(url, file, { watch = false, onProgress } = {}) {
+  const ctl = new AbortController(), t0 = Date.now(); let got = 0, slow = false;
+  const timer = setInterval(() => { const s = (Date.now() - t0) / 1000; if (watch && s >= 10 && got / s < 300 * 1024) { slow = true; ctl.abort(); } if (s > 900) ctl.abort(); }, 1000);
+  const out = fs.createWriteStream(file);
+  try {
+    const r = await fetch(url, { signal: ctl.signal, redirect: 'follow' });
+    if (!r.ok) throw Error('HTTP ' + r.status);
+    const total = Number(r.headers.get('content-length')) || 0;
+    for await (const chunk of r.body) { got += chunk.length; if (!out.write(chunk)) await new Promise((res) => out.once('drain', res)); onProgress?.(got, total); }
+    await new Promise((res, rej) => out.end((e) => (e ? rej(e) : res())));
+  } catch (e) { out.destroy(); throw Error(slow ? '速度太慢' : e.name === 'AbortError' ? '超时' : e.message); }
+  finally { clearInterval(timer); }
+}
 async function copyTree(source, destination) {
   noLink(source);
   await fsp.mkdir(destination,{recursive:true});
@@ -56,6 +87,7 @@ export class WorldManager {
     this.archiveDir=path.join(this.root,'worlds-archive');this.engineFile=path.join(this.dir,'engine.json');
     for(const p of [this.dir,this.backupDir,this.archiveDir]){noLink(p);fs.mkdirSync(p,{recursive:true});}
     this.child=null;this.current=null;this.phase='stopped';this.message='';this.tail=[];this.mutating=false;this.lastExit=null;this.operation=0;
+    this.engineState={phase:'idle'};this.preparing=null;
   }
   location(id, archived=false) {
     if(!/^[a-z0-9][a-z0-9-]{0,63}$/.test(String(id)))throw Error('无效的世界标识。');
@@ -67,7 +99,7 @@ export class WorldManager {
     if(!w||w.id!==id)throw Error('找不到这个世界，请刷新列表。');
     return {...w,dir,archived};
   }
-  status() { return {id:this.current,phase:this.phase,message:this.message,running:!!this.child,pid:this.child?.pid??null,logs:this.tail.slice(-12),busy:this.mutating,lastExit:this.lastExit}; }
+  status() { return {id:this.current,phase:this.phase,message:this.message,running:!!this.child,pid:this.child?.pid??null,logs:this.tail.slice(-12),busy:this.mutating,lastExit:this.lastExit,engine:this.engineState}; }
   engine() {
     const saved=read(this.engineFile,{})||{};
     const candidates=[path.join(this.sourceRoot,'server/server.jar'),path.join(this.sourceRoot,'services/server/server.jar'),path.join(this.sourceRoot,'dev/server/server.jar')];
@@ -217,9 +249,31 @@ export class WorldManager {
   // The release ships Paper's server.jar alone (Mojang's server file may not be passed on): the first start lets Paper fetch it and
   // build libraries/versions next to the jar, once, so every world after that copies them locally. Only for the bundled server/ jar -
   // a jar the user picked keeps its old behaviour.
-  async patchEngine(engine) {
+  async patchEngine(engine) { await this.prepare(engine); }
+  // Owner 10-31 ("提前下载加镜像"): the launcher starts this as soon as it opens, so the core is usually ready before the first world is
+  // started; a start meanwhile waits for the same run. Mojang's file comes from the official source, or from the BMCLAPI mirror (same
+  // path) when the official one fails or is slow; it is checked against the SHA-256 Paper records, and if both fail Paper fetches it.
+  prepare(engine=this.engine()) {
     const from=path.dirname(engine.jar);
-    if(path.resolve(engine.jar)!==path.resolve(this.sourceRoot,'server/server.jar')||exists(path.join(from,'versions')))return;
+    if(!engine.available||path.resolve(engine.jar)!==path.resolve(this.sourceRoot,'server/server.jar')||exists(path.join(from,'versions'))){this.engineState={phase:'ready'};return Promise.resolve();}
+    this.preparing??=this._prepare(engine,from).then(()=>{this.engineState={phase:'ready'};},e=>{this.engineState={phase:'error',message:e.message};throw e;}).finally(()=>{this.preparing=null;});
+    return this.preparing;
+  }
+  async _prepare(engine,from) {
+    const [sha,url,name]=String(zipEntry(engine.jar,'META-INF/download-context')||'').trim().split('\t');
+    const file=name&&path.join(from,'cache',name),good=f=>exists(f)&&crypto.createHash('sha256').update(fs.readFileSync(f)).digest('hex')===sha;
+    if(sha&&/^https:\/\//.test(url||'')&&!good(file)){
+      fs.mkdirSync(path.dirname(file),{recursive:true});const part=file+'.part';
+      for(const [label,u,watch] of [['官方',url,true],['镜像',url.replace(/^https:\/\/piston-data\.mojang\.com\//,'https://bmclapi2.bangbang93.com/'),false]]){
+        this.engineState={phase:'downloading',source:label,percent:0,message:`正在下载 Minecraft 官方服务器文件（${label}源）`};
+        try{
+          await download(u,part,{watch,onProgress:(got,total)=>{if(total)this.engineState.percent=Math.floor(got*100/total);}});
+          if(!good(part))throw Error('文件校验不通过');
+          fs.renameSync(part,file);this.log('服务器文件已下载（'+label+'源）');break;
+        }catch(e){fs.rmSync(part,{force:true});this.log('服务器文件'+label+'源下载未成功：'+e.message);}
+      }
+    }
+    this.engineState={phase:'patching',message:'正在准备服务器核心'};
     this.message='首次使用，正在准备服务器核心（需要联网，约 1–3 分钟）';
     const child=this.spawnProcess(engine.java,['-Dpaperclip.patchonly=true','-jar',engine.jar],{cwd:from,windowsHide:true,stdio:['ignore','pipe','pipe']});
     let out='';const keep=d=>{out=(out+d).slice(-4000);};child.stdout?.on('data',keep);child.stderr?.on('data',keep);
