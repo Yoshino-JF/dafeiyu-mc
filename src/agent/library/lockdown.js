@@ -8,8 +8,10 @@ import 'ses';
 let lockeddown = false;
 export function lockdown() {
   if (lockeddown) return;
-  lockeddown = true;
-  lockdown({
+  // dafeiyu 2026-10-26 (GPT #3019): this export shadows SES's global lockdown, so the upstream call below reached itself and SES
+  // never ran - the intrinsics stayed mutable and Function stayed reachable from endowed host objects. Call the global one, and
+  // mark done only once it has succeeded.
+  globalThis.lockdown({
     // basic devex and quality of life improvements
     localeTaming: 'unsafe',
     consoleTaming: 'unsafe',
@@ -19,9 +21,12 @@ export function lockdown() {
     // (mineflayer dep "protodef" uses eval)
     evalTaming: 'unsafeEval',
   });
+  lockeddown = true;
+  console.log('[sandbox] SES lockdown applied');
 }
 
 export const makeCompartment = (endowments = {}) => {
+  lockdown();   // dafeiyu: never a compartment before the realm is hardened, whoever forgets to call lockdown first
   return new Compartment({
     // provide untamed Math, Date, etc
     Math,

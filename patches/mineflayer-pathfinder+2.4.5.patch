@@ -1,5 +1,5 @@
 diff --git a/node_modules/mineflayer-pathfinder/index.js b/node_modules/mineflayer-pathfinder/index.js
-index b38bd30..2ca8205 100644
+index b38bd30..9cb7146 100644
 --- a/node_modules/mineflayer-pathfinder/index.js
 +++ b/node_modules/mineflayer-pathfinder/index.js
 @@ -14,6 +14,7 @@ const interactableBlocks = require('./lib/interactable.json')
@@ -10,7 +10,20 @@ index b38bd30..2ca8205 100644
    const ladderId = bot.registry.blocksByName.ladder.id
    const vineId = bot.registry.blocksByName.vine.id
    let stateMovements = new Movements(bot)
-@@ -61,6 +62,10 @@ function inject (bot) {
+@@ -27,8 +28,12 @@ function inject (bot) {
+   let placing = false
+   let placingBlock = null
+   let lastNodeTime = performance.now()
++  let movementProgress = null
+   let returningPos = null
+   let stopPathing = false
++  let pathRevision = 0
++  let edgeProgress = null
++  let cancelledJump = false
+   const physics = new Physics(bot)
+   const lockPlaceBlock = new Lock()
+   const lockEquipItem = new Lock()
+@@ -61,6 +66,10 @@ function inject (bot) {
    }
  
    bot.pathfinder.getPathTo = (movements, goal, timeout) => {
@@ -21,73 +34,536 @@ index b38bd30..2ca8205 100644
      const generator = bot.pathfinder.getPathFromTo(movements, bot.entity.position, goal, { timeout })
      const { value: { result, astarContext: context } } = generator.next()
      astarContext = context
-@@ -170,6 +175,16 @@ function inject (bot) {
+@@ -82,6 +91,26 @@ function inject (bot) {
+       const b = bot.blockAt(p) // The block we are standing in
+       // Offset the floored bot position by one if we are standing on a block that has not the full height but is solid
+       const offset = (b && dy > 0.001 && bot.entity.onGround && !stateMovements.emptyBlocks.has(b.type)) ? 1 : 0
++      // A crouching body can still overlap solid ground after its centre has
++      // crossed into an air cell. Plan from that real support, not an air
++      // reference block that moveToEdge can never bridge from.
++      if (bot.entity.onGround && startPos.distanceSquared(bot.entity.position) < 1e-8 && offset === 0) {
++        const halfWidth = (bot.entity.width || 0.6) / 2
++        const supports = []
++        for (let x = Math.floor(startPos.x - halfWidth); x <= Math.floor(startPos.x + halfWidth); x++) {
++          for (let z = Math.floor(startPos.z - halfWidth); z <= Math.floor(startPos.z + halfWidth); z++) {
++            const below = bot.blockAt(new Vec3(x, p.y - 1, z))
++            if (below?.shapes.some(s => Math.abs(p.y - 1 + s[4] - startPos.y) < 0.01 &&
++              x + s[0] < startPos.x + halfWidth && x + s[3] > startPos.x - halfWidth &&
++              z + s[2] < startPos.z + halfWidth && z + s[5] > startPos.z - halfWidth)) supports.push({ x, z })
++          }
++        }
++        if (!supports.some(s => s.x === p.x && s.z === p.z) && supports.length > 0) {
++          supports.sort((a, b) => Math.hypot(a.x + 0.5 - startPos.x, a.z + 0.5 - startPos.z) - Math.hypot(b.x + 0.5 - startPos.x, b.z + 0.5 - startPos.z))
++          p.x = supports[0].x
++          p.z = supports[0].z
++        }
++      }
+       start = new Move(p.x, p.y + offset, p.z, movements.countScaffoldingItems(), 0)
+     }
+     if (movements.allowEntityDetection) {
+@@ -121,7 +150,11 @@ function inject (bot) {
+   }
+ 
+   function resetPath (reason, clearStates = true) {
+-    if (!stopPathing && path.length > 0) bot.emit('path_reset', reason)
++    const edgeFailed = reason === 'edge_stuck' && !stopPathing && path.length > 0
++    if (!stopPathing && path.length > 0 && !edgeFailed) bot.emit('path_reset', reason)
++    pathRevision++
++    edgeProgress = null
++    movementProgress = null
+     path = []
+     if (digging) {
+       bot.on('diggingAborted', detectDiggingStopped)
+@@ -129,17 +162,24 @@ function inject (bot) {
+       bot.stopDigging()
+     }
+     placing = false
++    placingBlock = null
+     pathUpdated = false
+     astarContext = null
+     lockEquipItem.release()
+     lockPlaceBlock.release()
+     lockUseBlock.release()
+     stateMovements.clearCollisionIndex()
+-    if (clearStates) bot.clearControlStates()
+     if (stopPathing) return stop()
++    if (clearStates) {
++      if (edgeFailed || (reason === 'goal_updated' && stateGoal === null)) fullStop(true)
++      else bot.clearControlStates()
++    }
++    // Publish after cleanup: a listener may install the next goal synchronously.
++    if (edgeFailed) bot.emit('path_reset', reason)
+   }
+ 
+   bot.pathfinder.setGoal = (goal, dynamic = false) => {
++    if (goal !== null) stopPathing = false // A new owner goal supersedes an old soft stop.
+     stateGoal = goal
+     dynamicGoal = dynamic
+     bot.emit('goal_updated', goal, dynamic)
+@@ -161,6 +201,7 @@ function inject (bot) {
+ 
+   bot.pathfinder.stop = () => {
+     stopPathing = true
++    if (path.length === 0) resetPath('stop')
+   }
+ 
+   bot.on('physicsTick', monitorMovement)
+@@ -168,9 +209,25 @@ function inject (bot) {
+   function postProcessPath (path) {
+     for (let i = 0; i < path.length; i++) {
        const curPoint = path[i]
-       if (curPoint.toBreak.length > 0 || curPoint.toPlace.length > 0) break
+-      if (curPoint.toBreak.length > 0 || curPoint.toPlace.length > 0) break
++      // dafeiyu 10-29 (her real door): a closed door is a "use" on the path, and that stopped the centring here - the door cell and all
++      // after it were aimed at their corner (x 0.0), and once open she pushed into the panel at the doorstep. Opening is not building.
++      const opensOnly = curPoint.toBreak.length === 0 && curPoint.toPlace.length > 0 && curPoint.toPlace.every((p) => p.useOne)
++      if (!opensOnly && (curPoint.toBreak.length > 0 || curPoint.toPlace.length > 0)) break
        const b = bot.blockAt(new Vec3(curPoint.x, curPoint.y, curPoint.z))
+-      if (b && (b.type === waterType || ((b.type === ladderId || b.type === vineId) && i + 1 < path.length && path[i + 1].y < curPoint.y))) {
 +
 +      // openned doors have small Collision box
 +      // that may stop the bot from moving forward
-+      if(i === 0 && b?.name.includes('door')) {
++      // dafeiyu 10-29 (her real taiga house door): only the first node was centred - a door further along the path was aimed at "the
++      // top of" its open panel (x 0.0 of the cell), and she pushed against that panel at the doorstep for seconds. Every door cell is
++      // walked through at its centre.
++      if(b && (b.name.includes('door') || b.name.includes('fence_gate'))) {
 +        curPoint.x = Math.floor(curPoint.x) + 0.5
 +        curPoint.y = Math.floor(curPoint.y)
 +        curPoint.z = Math.floor(curPoint.z) + 0.5
 +        continue
 +      }
 +
-       if (b && (b.type === waterType || ((b.type === ladderId || b.type === vineId) && i + 1 < path.length && path[i + 1].y < curPoint.y))) {
++      if (b && ((stateMovements.liquids.has(b.type) && b.type !== lavaType) || ((b.type === ladderId || b.type === vineId) && i + 1 < path.length && path[i + 1].y < curPoint.y))) {
          curPoint.x = Math.floor(curPoint.x) + 0.5
          curPoint.y = Math.floor(curPoint.y)
-@@ -524,6 +539,9 @@ function inject (bot) {
+         curPoint.z = Math.floor(curPoint.z) + 0.5
+@@ -219,6 +276,12 @@ function inject (bot) {
+     }
+     // check if we are between 2 nodes
+     const n1 = path[minI]
++    // A partial A* update must not turn an unfinished jump into the following
++    // dig/tower action: that action calls fullStop and kills jump momentum.
++    if (n1.parkour && !bot.entity.onGround) {
++      path.splice(0, minI)
++      return
++    }
+     // check if node already reached
+     const dx = n1.x - bot.entity.position.x
+     const dy = n1.y - bot.entity.position.y
+@@ -327,21 +390,42 @@ function inject (bot) {
+    * Stop the bot's movement and recenter to the center off the block when the bot's hitbox is partially beyond the
+    * current blocks dimensions.
+    */
+-  function fullStop () {
++  function canBrakeOnDryGround () {
++    const e = bot.entity
++    if (e.onGround !== true || e.isInWater !== false || e.isInLava !== false ||
++      !Number.isFinite(e.velocity.y) || e.velocity.y > 0 || bot.controlState.jump) return false
++    const half = (e.width || 0.6) / 2
++    let supported = false
++    for (let x = Math.floor(e.position.x - half); x <= Math.floor(e.position.x + half); x++) {
++      for (let z = Math.floor(e.position.z - half); z <= Math.floor(e.position.z + half); z++) {
++        for (let y = Math.floor(e.position.y - 0.01); y <= Math.floor(e.position.y + (e.height || 1.8)); y++) {
++          const b = bot.blockAt(new Vec3(x, y, z))
++          if (!b || b.type === waterType || b.type === lavaType || b.getProperties?.()?.waterlogged === true) return false
++          if (b.shapes?.some(s => Math.abs(y + s[4] - e.position.y) < 0.01 &&
++            x + s[0] < e.position.x + half && x + s[3] > e.position.x - half &&
++            z + s[2] < e.position.z + half && z + s[5] > e.position.z - half)) supported = true
++        }
++      }
++    }
++    return supported
++  }
++
++  function fullStop (conditional = false) {
++    // setGoal(null), stop and requestInterrupt can all run in one physics frame.
++    // Clearing a queued jump must not make the next stop mistake it for dry rest.
++    if (conditional && bot.controlState.jump) cancelledJump = true
++    const brake = !conditional || (!cancelledJump && canBrakeOnDryGround())
+     bot.clearControlStates()
+ 
+     // Force horizontal velocity to 0 (otherwise inertia can move us too far)
+     // Kind of cheaty, but the server will not tell the difference
+-    bot.entity.velocity.x = 0
+-    bot.entity.velocity.z = 0
+-
+-    const blockX = Math.floor(bot.entity.position.x) + 0.5
+-    const blockZ = Math.floor(bot.entity.position.z) + 0.5
++    if (brake) {
++      bot.entity.velocity.x = 0
++      bot.entity.velocity.z = 0
++    }
+ 
+-    // Make sure our bounding box don't collide with neighboring blocks
+-    // otherwise recenter the position
+-    if (Math.abs(bot.entity.position.x - blockX) > 0.2) { bot.entity.position.x = blockX }
+-    if (Math.abs(bot.entity.position.z - blockZ) > 0.2) { bot.entity.position.z = blockZ }
++    // Stopping must not teleport a partly supported body into an air cell.
++    // Position and support remain authoritative physics/server state.
+   }
+ 
+   function moveToEdge (refBlock, edge) {
+@@ -365,11 +449,20 @@ function inject (bot) {
+     const viewVector = getViewVector(targetPitch, targetYaw)
+     // While the bot is not in the right position rotate the view and press back while crouching
+     if (bot.entity.position.distanceTo(refBlock.clone().offset(edge.x + 0.5, 1, edge.z + 0.5)) > 0.4) {
++      const distance = bot.entity.position.distanceTo(refBlock.offset(edge.x + 0.5, 1, edge.z + 0.5))
++      const now = performance.now()
++      if (!edgeProgress || edgeProgress.step !== placingBlock) edgeProgress = { step: placingBlock, best: distance, at: now }
++      if (distance < edgeProgress.best - 0.05) edgeProgress = { step: placingBlock, best: distance, at: now }
++      if (now - edgeProgress.at > 3500) {
++        resetPath('edge_stuck')
++        return false
++      }
+       bot.lookAt(bot.entity.position.offset(viewVector.x, viewVector.y, viewVector.z), allowInstantTurn)
+       bot.setControlState('sneak', true)
+       bot.setControlState('back', true)
+       return false
+     }
++    edgeProgress = null
+     bot.setControlState('back', false)
+     return true
+   }
+@@ -388,11 +481,15 @@ function inject (bot) {
+   }
+ 
+   function stop () {
++    pathRevision++
++    edgeProgress = null
+     stopPathing = false
+     stateGoal = null
+     path = []
++    placing = false
++    placingBlock = null
++    fullStop(true)
+     bot.emit('path_stop')
+-    fullStop()
+   }
+ 
+   bot.on('blockUpdate', (oldBlock, newBlock) => {
+@@ -417,6 +514,7 @@ function inject (bot) {
+   })
+ 
+   function monitorMovement () {
++    cancelledJump = false
+     // Test freemotion
+     if (stateMovements && stateMovements.allowFreeMotion && stateGoal && stateGoal.entity) {
+       const target = stateGoal.entity
+@@ -479,21 +577,30 @@ function inject (bot) {
+     let nextPoint = path[0]
+     const p = bot.entity.position
+ 
++    // dafeiyu 10-29: a partial path (the search still running) does not break a block of her own house (bot.ownHouseBlock, houses.js) -
++    // the finished search a tick later often went round through the door, and a dig once started is not taken back. Only her house:
++    // holding every partial dig left her standing under trees for the whole thinkTimeout.
++    if (!digging && astartTimedout && bot.ownHouseBlock && nextPoint.toBreak.some((b) => bot.ownHouseBlock(b) !== undefined)) return
++
+     // Handle digging
+     if (digging || nextPoint.toBreak.length > 0) {
+       if (!digging && bot.entity.onGround) {
+         digging = true
++        const revision = pathRevision
+         const b = nextPoint.toBreak.shift()
+         const block = bot.blockAt(new Vec3(b.x, b.y, b.z), false)
+         const tool = bot.pathfinder.bestHarvestTool(block)
+         fullStop()
+ 
+         const digBlock = () => {
++          if (revision !== pathRevision) return
+           bot.dig(block, true)
+             .catch(_ignoreError => {
++              if (revision !== pathRevision) return
+               resetPath('dig_error')
+             })
+             .then(function () {
++              if (revision !== pathRevision) return
+               lastNodeTime = performance.now()
+               digging = false
+             })
+@@ -513,6 +620,9 @@ function inject (bot) {
+     // TODO: sneak when placing or make sure the block is not interactive
+     if (placing || nextPoint.toPlace.length > 0) {
+       if (!placing) {
++        // A replan can expose a new placement while the previous jump is
++        // unfinished. Starting it would fullStop the body in mid-air.
++        if (!bot.entity.onGround && !bot.entity.isInWater && !bot.entity.isInLava) return
+         placing = true
+         placingBlock = nextPoint.toPlace.shift()
+         fullStop()
+@@ -521,10 +631,16 @@ function inject (bot) {
+       // Open gates or doors
+       if (placingBlock?.useOne) {
+         if (!lockUseBlock.tryAcquire()) return
++        const revision = pathRevision
          bot.activateBlock(bot.blockAt(new Vec3(placingBlock.x, placingBlock.y, placingBlock.z))).then(() => {
++          if (revision !== pathRevision) return
            lockUseBlock.release()
            placingBlock = nextPoint.toPlace.shift()
 +          if (!placingBlock) {
 +            placing = false
 +          }
          }, err => {
++          if (revision !== pathRevision) return
            console.error(err)
            lockUseBlock.release()
-@@ -550,6 +568,7 @@ function inject (bot) {
+         })
+@@ -540,29 +656,50 @@ function inject (bot) {
+       }
+       let canPlace = true
+       if (placingBlock.jump) {
++        // Walk onto the support before pillaring. Partial body overlap with
++        // a neighbouring low ceiling can otherwise block every jump.
++        if (bot.entity.onGround && !moveToBlock(new Vec3(placingBlock.x, placingBlock.y + 1, placingBlock.z))) return
+         bot.setControlState('jump', true)
+-        canPlace = placingBlock.y + 1 < bot.entity.position.y
++        // The whole destination block must be below the feet, not just its
++        // bottom face; otherwise the server rejects it as inside the body.
++        canPlace = placingBlock.y + placingBlock.dy + 1 <= bot.entity.position.y
+       }
+       if (canPlace) {
+         if (!lockEquipItem.tryAcquire()) return
++        const revision = pathRevision
+         bot.equip(block, 'hand')
+-          .then(function () {
++          .then(async function () {
++            if (revision !== pathRevision) return
              lockEquipItem.release()
              const refBlock = bot.blockAt(new Vec3(placingBlock.x, placingBlock.y, placingBlock.z), false)
++            // Aim before the last height check: placeBlock's normal smooth
++            // look can otherwise wait until the body has fallen into the cell.
++            if (placingBlock.jump) await bot.lookAt(refBlock.position.offset(0.5, 1, 0.5), true)
++            if (revision !== pathRevision) return
++            // Equip can await a server inventory sync past the jump apex.
++            // Recheck at dispatch, and retry the jump if that window expired.
++            if (placingBlock.jump && bot.entity.position.y < placingBlock.y + placingBlock.dy + 1) return
              if (!lockPlaceBlock.tryAcquire()) return
-+            bot.world.setBlockStateId(refBlock.position.offset(placingBlock.dx, placingBlock.dy, placingBlock.dz), 1)
++            // Wait for the server placement reply; speculative stone corrupts
++            // placeBlock's old/new comparison and can turn an air refusal into success.
              if (interactableBlocks.includes(refBlock.name)) {
                bot.setControlState('sneak', true)
              }
-@@ -557,6 +576,7 @@ function inject (bot) {
++            if (placingBlock.jump) bot.flushPositionForItemUse?.()
+             bot.placeBlock(refBlock, new Vec3(placingBlock.dx, placingBlock.dy, placingBlock.dz))
                .then(function () {
++                if (revision !== pathRevision) return
                  // Dont release Sneak if the block placement was not successful
                  bot.setControlState('sneak', false)
 +                bot.setControlState('jump', false)
                  if (bot.pathfinder.LOSWhenPlacingBlocks && placingBlock.returnPos) returningPos = placingBlock.returnPos.clone()
                })
                .catch(_ignoreError => {
-@@ -576,7 +596,7 @@ function inject (bot) {
++                if (revision !== pathRevision) return
+                 resetPath('place_error')
+               })
+               .then(() => {
++                if (revision !== pathRevision) return
+                 lockPlaceBlock.release()
+                 placing = false
+                 lastNodeTime = performance.now()
+@@ -576,7 +713,7 @@ function inject (bot) {
      let dx = nextPoint.x - p.x
      const dy = nextPoint.y - p.y
      let dz = nextPoint.z - p.z
 -    if (Math.abs(dx) <= 0.35 && Math.abs(dz) <= 0.35 && Math.abs(dy) < 1) {
-+    if (Math.abs(dx) <= 0.175 && Math.abs(dz) <= 0.175 && Math.abs(dy) < 1) {
++    if (Math.abs(dx) <= 0.175 && Math.abs(dz) <= 0.175 && Math.abs(dy) < 1 && (!nextPoint.parkour || bot.entity.onGround)) {
        // arrived at next point
        lastNodeTime = performance.now()
        if (stopPathing) {
-@@ -611,6 +631,9 @@ function inject (bot) {
+@@ -609,6 +746,13 @@ function inject (bot) {
+     bot.setControlState('jump', false)
+ 
      if (bot.entity.isInWater) {
++      // Follow the depth of the planned swim node. Constantly swimming up
++      // can leave the body above a shallow underwater node forever, so that
++      // even a complete route is repeatedly reset as stuck.
++      // dafeiyu 10-29 lab run 4: following a deep node with 3 air left, a walk to the shore drowned her; low on air a walk swims up
++      bot.setControlState('jump', nextPoint.y >= p.y - 0.5 || (bot.oxygenLevel ?? 20) <= 6)
++      bot.setControlState('sprint', false)
++    } else if (bot.entity.isInLava) {
        bot.setControlState('jump', true)
        bot.setControlState('sprint', false)
-+    } else if (bot.entity.isInLava) {
-+      bot.setControlState('jump', true)
-+      bot.setControlState('sprint', false)
      } else if (stateMovements.allowSprinting && physics.canStraightLine(path, true)) {
-       bot.setControlState('jump', false)
-       bot.setControlState('sprint', true)
+@@ -628,6 +772,17 @@ function inject (bot) {
+       bot.setControlState('sprint', false)
+     }
+ 
++    // A post-processed node may be several metres away. Count real progress
++    // toward that same point, not just arrival at the whole node. Changing
++    // the point or bobbing back and forth must not renew the stuck deadline.
++    const movementKey = `${nextPoint.x},${nextPoint.y},${nextPoint.z}`
++    const remainingDistance = Math.hypot(nextPoint.x - p.x, nextPoint.y - p.y, nextPoint.z - p.z)
++    if (!movementProgress || movementProgress.key !== movementKey) {
++      movementProgress = { key: movementKey, best: remainingDistance }
++    } else if (remainingDistance <= movementProgress.best - 0.25) {
++      movementProgress.best = remainingDistance
++      lastNodeTime = performance.now()
++    }
+     // check for futility
+     if (performance.now() - lastNodeTime > 3500) {
+       // should never take this long to go to the next node
+diff --git a/node_modules/mineflayer-pathfinder/lib/goals.js b/node_modules/mineflayer-pathfinder/lib/goals.js
+index cc6d875..99f2c46 100644
+--- a/node_modules/mineflayer-pathfinder/lib/goals.js
++++ b/node_modules/mineflayer-pathfinder/lib/goals.js
+@@ -172,12 +172,19 @@ class GoalLookAtBlock extends Goal {
+   }
+ 
+   isEnd (node) {
+-    if (node.distanceTo(this.pos.offset(0, this.entityHeight, 0)) > this.reach) return false
++    const startPos = new Vec3(node.x + 0.5, node.y + this.entityHeight, node.z + 0.5)
++    // Reach is measured from the eyes to a block face, not from the feet to
++    // a point above the target. Use the box only as a lower bound; raycast
++    // below still checks the real collision shape, obstruction and reach.
++    const nearX = Math.max(this.pos.x - startPos.x, 0, startPos.x - this.pos.x - 1)
++    const nearY = Math.max(this.pos.y - startPos.y, 0, startPos.y - this.pos.y - 1)
++    const nearZ = Math.max(this.pos.z - startPos.z, 0, startPos.z - this.pos.z - 1)
++    if (Math.hypot(nearX, nearY, nearZ) > this.reach) return false
+     // Check faces that could be seen from the current position. If the delta is smaller then 0.5 that means the bot cam most likely not see the face as the block is 1 block thick
+     // this could be false for blocks that have a smaller bounding box then 1x1x1
+-    const dx = node.x - (this.pos.x + 0.5)
++    const dx = startPos.x - (this.pos.x + 0.5)
+     const dy = node.y + this.entityHeight - (this.pos.y + 0.5) // -0.5 because the bot position is calculated from the block position that is inside its feet so 0.5 - 1 = -0.5
+-    const dz = node.z - (this.pos.z + 0.5)
++    const dz = startPos.z - (this.pos.z + 0.5)
+     // Check y first then x and z
+     const visibleFaces = {
+       y: Math.sign(Math.abs(dy) > 0.5 ? dy : 0),
+@@ -191,7 +198,6 @@ class GoalLookAtBlock extends Goal {
+         continue
+       }
+       const targetPos = new Vec3(this.pos.x, this.pos.y, this.pos.z).offset(0.5 + (i === 'x' ? visibleFaces[i] * 0.5 : 0), 0.5 + (i === 'y' ? visibleFaces[i] * 0.5 : 0), 0.5 + (i === 'z' ? visibleFaces[i] * 0.5 : 0))
+-      const startPos = new Vec3(node.x + 0.5, node.y + this.entityHeight, node.z + 0.5)
+       const rayPos = this.world.raycast(startPos, targetPos.clone().subtract(startPos).normalize(), this.reach)?.position
+       if (rayPos && rayPos.x === this.pos.x && rayPos.y === this.pos.y && rayPos.z === this.pos.z) {
+         validFaces.push({
+@@ -361,7 +367,7 @@ class GoalFollow extends Goal {
+   }
+ 
+   isValid () {
+-    return this.entity != null
++    return this.entity != null && this.entity.isValid !== false
+   }
+ }
+ 
+diff --git a/node_modules/mineflayer-pathfinder/lib/goto.js b/node_modules/mineflayer-pathfinder/lib/goto.js
+index 0b8b9de..67a3baa 100644
+--- a/node_modules/mineflayer-pathfinder/lib/goto.js
++++ b/node_modules/mineflayer-pathfinder/lib/goto.js
+@@ -4,64 +4,75 @@ function error (name, message) {
+   return err
+ }
+ 
+-/**
+-   * Adds a easy-to-use API wrapper for quickly executing a goal and running
+-   * a callback when that goal is reached. This function serves to remove a
+-   * lot of boilerplate code for quickly executing a goal.
+-   *
+-   * @param {Bot} bot - The bot.
+-   * @param {Goal} goal - The goal to execute.
+-   * @returns {Promise} - resolves on success, rejects on error
+-   */
+ function goto (bot, goal) {
+   return new Promise((resolve, reject) => {
+-    function goalReached () {
+-      cleanup()
+-    }
+-
++    let finished = false
++    let retryTimer = null
++    let retries = 0
++    let checkpoint = bot.entity.position.clone()
++    function goalReached () { cleanup() }
+     function noPathListener (results) {
+-      if (results.path.length === 0) {
+-        cleanup()
+-      } else if (results.status === 'noPath') {
++      // An exhausted search is not arrival, even when its best path is empty.
++      if (results.status === 'noPath') {
+         cleanup(error('NoPath', 'No path to the goal!'))
+       } else if (results.status === 'timeout') {
+-        cleanup(error('Timeout', 'Took to long to decide path to goal!'))
++        const p = bot.entity.position
++        // A search budget can expire while its partial path is being walked.
++        // Only continue when the real body moved AND is now nearer the same
++        // goal. Never turn an exhausted NoPath, a stationary search, or a
++        // cancellation into an unbounded retry loop.
++        const progressed = checkpoint.distanceSquared(p) >= 1 &&
++          goal.heuristic(checkpoint.floored()) - goal.heuristic(p.floored()) >= 1
++        if (retries < 2 && progressed && retryTimer === null) {
++          retries++
++          checkpoint = p.clone()
++          // path_update is emitted before the pathfinder installs its result;
++          // wait until that frame ends before resetting from the new feet.
++          retryTimer = setTimeout(() => {
++            retryTimer = null
++            if (finished) return
++            if (bot.interrupt_code || bot.pathfinder.goal !== goal || goal.isValid?.() === false) {
++              cleanup(error('PathStopped', 'Path continuation was cancelled before it started.'))
++              return
++            }
++            bot.pathfinder.setGoal(goal)
++          }, 0)
++        } else {
++          cleanup(error('Timeout', 'Took too long to decide path to goal!'))
++        }
++      } else if (results.status === 'success' && results.path.length === 0) {
++        const p = bot.entity.position.floored()
++        const reached = goal.isEnd(p) || (bot.entity.onGround && goal.isEnd(p.offset(0, 1, 0)))
++        cleanup(reached ? undefined : error('NoPath', 'Empty path did not reach the goal!'))
+       }
++      // An empty partial result still has a running search: keep listening.
+     }
+-
+     function goalChangedListener (newGoal) {
+-      if (newGoal !== goal) {
+-        cleanup(error('GoalChanged', 'The goal was changed before it could be completed!'))
+-      }
++      if (newGoal !== goal) cleanup(error('GoalChanged', 'The goal was changed before it could be completed!'))
+     }
+-
+     function pathStopped () {
+       cleanup(error('PathStopped', 'Path was stopped before it could be completed! Thus, the desired goal was not reached.'))
+     }
+-
++    function pathReset (reason) {
++      if (reason === 'edge_stuck') cleanup(error('EdgeStuck', 'Edge positioning made no progress for 3.5 seconds; this movement step failed, goal not reached.'))
++    }
+     function cleanup (err) {
++      if (finished) return
++      finished = true
++      clearTimeout(retryTimer)
+       bot.removeListener('goal_reached', goalReached)
+       bot.removeListener('path_update', noPathListener)
+       bot.removeListener('goal_updated', goalChangedListener)
+       bot.removeListener('path_stop', pathStopped)
+-
+-      // Run callback on next event stack to let pathfinder properly cleanup,
+-      // otherwise chaining waypoints does not work properly.
+-      setTimeout(() => {
+-        if (err) {
+-          reject(err)
+-        } else {
+-          resolve()
+-        }
+-      }, 0)
++      bot.removeListener('path_reset', pathReset)
++      setTimeout(() => err ? reject(err) : resolve(), 0)
+     }
+-
+     bot.on('path_stop', pathStopped)
++    bot.on('path_reset', pathReset)
+     bot.on('goal_reached', goalReached)
+     bot.on('path_update', noPathListener)
+     bot.on('goal_updated', goalChangedListener)
+     bot.pathfinder.setGoal(goal)
+   })
+ }
+-
+ module.exports = goto
 diff --git a/node_modules/mineflayer-pathfinder/lib/movements.js b/node_modules/mineflayer-pathfinder/lib/movements.js
-index a7e3505..84a0841 100644
+index a7e3505..f0997e5 100644
 --- a/node_modules/mineflayer-pathfinder/lib/movements.js
 +++ b/node_modules/mineflayer-pathfinder/lib/movements.js
-@@ -50,7 +50,12 @@ class Movements {
+@@ -50,11 +50,20 @@ class Movements {
      this.blocksToAvoid.add(registry.blocksByName.fire.id)
      if (registry.blocksByName.cobweb) this.blocksToAvoid.add(registry.blocksByName.cobweb.id)
      if (registry.blocksByName.web) this.blocksToAvoid.add(registry.blocksByName.web.id)
@@ -101,7 +577,15 @@ index a7e3505..84a0841 100644
  
      this.liquids = new Set()
      this.liquids.add(registry.blocksByName.water.id)
-@@ -62,7 +67,13 @@ class Movements {
+     this.liquids.add(registry.blocksByName.lava.id)
++    // These empty-collision plants contain water, not air or solid footing.
++    for (const name of ['kelp', 'kelp_plant', 'seagrass', 'tall_seagrass']) {
++      if (registry.blocksByName[name]) this.liquids.add(registry.blocksByName[name].id)
++    }
+ 
+     this.gravityBlocks = new Set()
+     this.gravityBlocks.add(registry.blocksByName.sand.id)
+@@ -62,7 +71,13 @@ class Movements {
  
      this.climbables = new Set()
      this.climbables.add(registry.blocksByName.ladder.id)
@@ -116,7 +600,7 @@ index a7e3505..84a0841 100644
      this.emptyBlocks = new Set()
  
      this.replaceables = new Set()
-@@ -92,13 +103,15 @@ class Movements {
+@@ -92,13 +107,15 @@ class Movements {
        }
      })
      registry.blocksArray.forEach(block => {
@@ -134,7 +618,7 @@ index a7e3505..84a0841 100644
  
      this.exclusionAreasStep = []
      this.exclusionAreasBreak = []
-@@ -230,8 +243,13 @@ class Movements {
+@@ -230,8 +247,16 @@ class Movements {
        }
      }
      b.climbable = this.climbables.has(b.type)
@@ -146,11 +630,14 @@ index a7e3505..84a0841 100644
 +    const isClosedTrapdoor = this.openable.has(b.type) && b.name.includes('trapdoor') && b._properties?.open !== true
 +    
 +    b.safe = (b.boundingBox === 'empty' || b.climbable || this.carpets.has(b.type) || isOpenTrapdoor) && !this.blocksToAvoid.has(b.type)
-+    b.physical = (b.boundingBox === 'block' && !this.fences.has(b.type)) || isClosedTrapdoor
++    // dafeiyu 2026-10-28: a closed door's lower half counted as a block to stand on, so a path from the side jumped "onto" the door
++    // (node at the door cell, y+1) and stuck there; doors and gates are walked through (opened), never stood on
++    const isDoorOrGate = this.openable.has(b.type) && (b.name.endsWith('_door') || b.name.endsWith('_fence_gate'))
++    b.physical = (b.boundingBox === 'block' && !this.fences.has(b.type) && !isDoorOrGate) || isClosedTrapdoor
      b.replaceable = this.replaceables.has(b.type) && !b.physical
      b.liquid = this.liquids.has(b.type)
      b.height = pos.y + dy
-@@ -284,6 +302,18 @@ class Movements {
+@@ -284,6 +309,18 @@ class Movements {
      cost += this.exclusionStep(block) // Is excluded so can't move or break
      cost += this.getNumEntitiesAt(block.position, 0, 0, 0) * this.entityCost
      if (block.safe) return cost
@@ -169,7 +656,19 @@ index a7e3505..84a0841 100644
      if (!this.safeToBreak(block)) return 100 // Can't break, so can't move
      toBreak.push(block.position)
  
-@@ -387,8 +417,8 @@ class Movements {
+@@ -346,7 +383,10 @@ class Movements {
+     }
+ 
+     const block0 = this.getBlock(node, 0, -1, 0)
+-    if (blockC.height - block0.height > 1.2) return // Too high to jump
++    const current = this.getBlock(node, 0, 0, 0)
++    const swimStart = current.liquid && current.safe && current.type !== this.bot.registry.blocksByName.lava.id
++    const jumpBase = swimStart ? node.y : block0.height
++    if (blockC.height - jumpBase > 1.2) return // Too high to jump or climb out of water
+ 
+     cost += this.safeOrBreak(blockA, toBreak)
+     if (cost > 100) return
+@@ -387,8 +427,8 @@ class Movements {
      cost += this.safeOrBreak(blockB, toBreak)
      if (cost > 100) return
  
@@ -180,7 +679,60 @@ index a7e3505..84a0841 100644
        toPlace.push({ x: node.x + dir.x, y: node.y, z: node.z + dir.z, dx: 0, dy: 0, dz: 0, useOne: true }) // Indicate that a block should be used on this block not placed
      } else {
        cost += this.safeOrBreak(blockC, toBreak)
-@@ -554,6 +584,54 @@ class Movements {
+@@ -404,6 +444,13 @@ class Movements {
+     let cost = Math.SQRT2 // move cost
+     const toBreak = []
+ 
++    // dafeiyu 2026-10-28: a diagonal step "through" a closed door (it counts as passable because it can be opened) left her stuck at
++    // the door corner; a door or gate is only ever gone through straight on, so no diagonal touches one
++    const doorish = (b) => this.openable.has(b.type) && !b.name.includes('trapdoor')
++    for (let dy = 0; dy <= 2; dy++) {
++      if (doorish(this.getBlock(node, dir.x, dy, dir.z)) || doorish(this.getBlock(node, 0, dy, dir.z)) || doorish(this.getBlock(node, dir.x, dy, 0))) return
++    }
++
+     const blockC = this.getBlock(node, dir.x, 0, dir.z) // Landing block or standing on block when jumping up by 1
+     const y = blockC.physical ? 1 : 0
+ 
+@@ -423,6 +470,17 @@ class Movements {
+     const blockB2 = this.getBlock(node, dir.x, y + 1, 0)
+     const blockC2 = this.getBlock(node, dir.x, y, 0)
+     const blockD2 = this.getBlock(node, dir.x, y - 1, 0)
++    // A 0.6-wide body cutting the corner brushes both side cells, not
++    // only the cheaper one. Never cut a corner past lava or fire.
++    if ([blockB1, blockC1, blockB2, blockC2].some(b => this.blocksToAvoid.has(b.type))) return
++    // dafeiyu 2026-10-31 (day-night round 36): a diagonal jump up one block beside a full block at foot height (grass one up from the
++    // floor, under the 1.2 check above) caught her body on that corner - 33 "stuck" resets in 3.5 minutes on the way to her bed. Going
++    // up diagonally needs both side cells free at foot height; otherwise it is two straight steps.
++    if (y === 1 && (blockD1.physical || blockD2.physical)) return
++    // Swimming straight at a diagonal step cannot turn through the cheaper
++    // side corridor. Leave the liquid cardinally before climbing past a wall.
++    if (y === 1 && this.getBlock(node, 0, 0, 0).liquid &&
++      (!blockB1.safe || !blockC1.safe || !blockB2.safe || !blockC2.safe)) return
+     cost2 += this.safeOrBreak(blockB2, toBreak2)
+     cost2 += this.safeOrBreak(blockC2, toBreak2)
+     if (blockD2.height - block0.height > 1.2) cost2 += this.safeOrBreak(blockD2, toBreak2)
+@@ -522,7 +580,19 @@ class Movements {
+ 
+   getMoveUp (node, neighbors) {
+     const block1 = this.getBlock(node, 0, 0, 0)
+-    if (block1.liquid) return
++    if (block1.liquid) {
++      const feet = this.getBlock(node, 0, 1, 0)
++      const head = this.getBlock(node, 0, 2, 0)
++      const lava = this.bot.registry.blocksByName.lava.id
++      // Rise within water to the surface. Do not invent unsupported air
++      // nodes above it, or swim through unknown blocks, ceilings or lava.
++      if (!block1.safe || !feet.safe || !head.safe || !feet.liquid ||
++        [block1.type, feet.type, head.type].includes(lava)) return
++      const cost = 1 + this.liquidCost + this.exclusionStep(feet) + this.exclusionStep(head)
++      if (cost > 100) return
++      neighbors.push(new Move(node.x, node.y + 1, node.z, node.remainingBlocks, cost))
++      return
++    }
+     if (this.getNumEntitiesAt(node, 0, 0, 0) > 0) return // an entity (besides the player) is blocking the building area
+ 
+     const block2 = this.getBlock(node, 0, 2, 0)
+@@ -554,6 +624,54 @@ class Movements {
      neighbors.push(new Move(node.x, node.y + 1, node.z, node.remainingBlocks - toPlace.length, cost, toBreak, toPlace))
    }
  
@@ -235,7 +787,7 @@ index a7e3505..84a0841 100644
    // Jump up, down or forward over a 1 block gap
    getMoveParkourForward (node, dir, neighbors) {
      const block0 = this.getBlock(node, 0, -1, 0)
-@@ -656,8 +734,27 @@ class Movements {
+@@ -656,8 +774,27 @@ class Movements {
      this.getMoveDown(node, neighbors)
      this.getMoveUp(node, neighbors)
  

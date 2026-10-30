@@ -8,7 +8,9 @@ export class SkillLibrary {
         this.embedding_model = embedding_model;
         this.skill_docs_embeddings = {};
         this.skill_docs = null;
-        this.always_show_skills = ['skills.placeBlock', 'skills.wait', 'skills.breakBlockAt']
+        // owner 10-28 MEETING-5: final-112c her code called skills.goToGoal(bot, {x,y,z}) twice ("goal.heuristic is not a function") - the
+        // docs she was shown had no way to walk to a point. goToPosition is always shown.
+        this.always_show_skills = ['skills.placeBlock', 'skills.wait', 'skills.breakBlockAt', 'skills.goToPosition']
     }
     async initSkillLibrary() {
         const skillDocs = getSkillDocs();
@@ -81,7 +83,7 @@ export class SkillLibrary {
             }
         });
         
-        let relevant_skill_docs = '#### RELEVANT CODE DOCS ###\nThe following functions are available to use:\n';
+        let relevant_skill_docs = '#### RELEVANT CODE DOCS ###\nThe following functions are available to use. To walk to a point use skills.goToPosition(bot, x, y, z, min_distance) - do not build pathfinder goals yourself (skills.goToGoal needs a real goal object, not {x, y, z}). In water: skills.swimUp(bot, max_seconds) / skills.swimDown(bot, seconds); your air is bot.oxygenLevel (20 = full).\n';
         relevant_skill_docs += Array.from(selected_docs).join('\n### ');
 
         console.log('Selected skill docs:', Array.from(selected_docs).map(doc => {

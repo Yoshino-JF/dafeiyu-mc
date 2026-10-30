@@ -1,6 +1,7 @@
 import { writeFileSync, readFileSync, mkdirSync, existsSync } from 'fs';
 import { NPCData } from './npc/data.js';
 import settings from './settings.js';
+import { logLifecycle } from './dafeiyu_log.js';
 
 
 export class History {
@@ -21,9 +22,15 @@ export class History {
         this.max_messages = settings.max_messages;
 
         // Number of messages to remove from current history and save into memory
-        this.summary_chunk_size = 5; 
+        // dafeiyu (DeepSeek #3462, final-9): with 5 she rewrote her memory 140 times in 45 min, once every ~19 s, each one a model
+        // call her next turn waited for - about a quarter of her turns, while skeletons shot her. 10 halves the calls.
+        this.summary_chunk_size = 10;
         // chunking reduces expensive calls to promptMemSaving and appendFullHistory
         // and improves the quality of the memory summary
+
+        // chunks taken out of context and not yet folded into memory; summarised in the background, one call at a time
+        this.pending = [];
+        this.summarizing = null;
     }
 
     getHistory() { // expects an Examples object
@@ -40,6 +47,8 @@ export class History {
         }
 
         console.log("Memory updated to: ", this.memory);
+        // DeepSeek #3495: the console log has no time, so rewrites could only be counted per run - one timed event per rewrite
+        logLifecycle('memory_rewrite', { turns: turns.length, chars: this.memory.length });
     }
 
     async appendFullHistory(to_store) {
@@ -74,8 +83,23 @@ export class History {
             while (this.turns.length > 0 && this.turns[0].role === 'assistant')
                 chunk.push(this.turns.shift()); // remove until turns starts with system/user message
 
-            await this.summarizeMemories(chunk);
-            await this.appendFullHistory(chunk);
+            // not awaited: her next turn no longer waits for the summary (chunks arriving meanwhile go into the next call)
+            this.pending.push(...chunk);
+            if (!this.summarizing) this.summarizing = this.drainPending();
+        }
+    }
+
+    async drainPending() {
+        try {
+            while (this.pending.length > 0) {
+                const chunk = this.pending.splice(0);
+                await this.appendFullHistory(chunk);   // the local record first, so a failed summary call loses nothing on disk
+                await this.summarizeMemories(chunk);
+            }
+        } catch (err) {
+            console.error(`Memory summary failed: ${err?.message || err}`);
+        } finally {
+            this.summarizing = null;
         }
     }
 

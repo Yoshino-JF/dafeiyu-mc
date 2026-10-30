@@ -1,4 +1,5 @@
 import { io } from 'socket.io-client';
+import { logLifecycle } from './dafeiyu_log.js';
 import convoManager from './conversation.js';
 import { setSettings } from './settings.js';
 import { getFullState } from './library/full_state.js';
@@ -35,12 +36,25 @@ class MindServerProxy {
         this.connected = true;
         console.log(name, 'connected to MindServer');
 
-        this.socket.on('disconnect', () => {
-            console.log('Disconnected from MindServer');
+        // dafeiyu 2026-10-25: a long pathfinding search blocks the event loop, the socket.io heartbeat times out and the old handler
+        // killed her mid-task (an 'Exiting.' every few minutes). socket.io reconnects by itself; only a link that stays down is fatal.
+        this.socket.on('disconnect', (reason) => {
+            console.log('Disconnected from MindServer:', reason);
+            logLifecycle('mindserver_disconnect', { reason: String(reason) });
             this.connected = false;
-            if (this.agent) {
-                this.agent.cleanKill('Disconnected from MindServer. Killing agent process.');
-            }
+            clearTimeout(this.reconnectTimer);
+            this.reconnectTimer = setTimeout(() => {
+                if (!this.connected && this.agent) this.agent.cleanKill('Disconnected from MindServer for 60 s. Killing agent process.');
+            }, 60000);
+        });
+        this.socket.on('connect', () => {
+            if (this.connected) return;
+            console.log('Reconnected to MindServer');
+            logLifecycle('mindserver_reconnect');
+            this.connected = true;
+            clearTimeout(this.reconnectTimer);
+            this.socket.emit('connect-agent-process', this.name);   // the server dropped our socket on disconnect: register again
+            if (this.agent) this.socket.emit('login-agent', this.agent.name);
         });
 
         this.socket.on('chat-message', (agentName, json) => {

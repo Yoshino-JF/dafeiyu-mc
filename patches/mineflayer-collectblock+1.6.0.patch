@@ -1,0 +1,125 @@
+diff --git a/node_modules/mineflayer-collectblock/lib/CollectBlock.js b/node_modules/mineflayer-collectblock/lib/CollectBlock.js
+index 445df38..2bccf44 100644
+--- a/node_modules/mineflayer-collectblock/lib/CollectBlock.js
++++ b/node_modules/mineflayer-collectblock/lib/CollectBlock.js
+@@ -18,17 +18,37 @@ const BlockVeins_1 = require("./BlockVeins");
+ const Targets_1 = require("./Targets");
+ const events_1 = require("events");
+ const util_1 = require("util");
++async function collectStep(bot, stage, target, fn) {
++    if (process.env.DAFEIYU_COLLECT_TRACE !== '1')
++        return await fn();
++    const started = Date.now();
++    const trace = (state, error) => console.log('[collect-await]', JSON.stringify({
++        at: Date.now(), stage: `plugin:${stage}`, state, ms: Date.now() - started,
++        target: target?.position, entityId: target?.id,
++        feet: bot.entity.position, error: error?.name
++    }));
++    trace('begin');
++    try {
++        const value = await fn();
++        trace('end');
++        return value;
++    }
++    catch (error) {
++        trace('error', error);
++        throw error;
++    }
++}
+ function collectAll(bot, options) {
+     return __awaiter(this, void 0, void 0, function* () {
+         while (!options.targets.empty) {
+-            yield (0, Inventory_1.emptyInventoryIfFull)(bot, options.chestLocations, options.itemFilter);
++            yield collectStep(bot, 'inventory-room', null, () => (0, Inventory_1.emptyInventoryIfFull)(bot, options.chestLocations, options.itemFilter));
+             const closest = options.targets.getClosest();
+             if (closest == null)
+                 break;
+             switch (closest.constructor.name) {
+                 case 'Block': {
+                     const goal = new mineflayer_pathfinder_1.goals.GoalLookAtBlock(closest.position, bot.world);
+-                    yield bot.pathfinder.goto(goal);
++                    yield collectStep(bot, 'block-goto', closest, () => bot.pathfinder.goto(goal));
+                     yield mineBlock(bot, closest, options);
+                     // TODO: options.ignoreNoPath
+                     break;
+@@ -38,16 +58,45 @@ function collectAll(bot, options) {
+                     if (!closest.isValid)
+                         break;
+                     const tempEvents = new TemporarySubscriber_1.TemporarySubscriber(bot);
++                    const pickupGoal = new mineflayer_pathfinder_1.goals.GoalFollow(closest, 0);
++                    let pickupTimer;
++                    let finishPickup;
++                    // Resolve with an error value: cancellation may happen while goto is
++                    // still pending, before we await this promise (avoid an unhandled rejection).
+                     const waitForPickup = new Promise(resolve => {
++                        finishPickup = resolve;
+                         tempEvents.subscribeTo('entityGone', (entity) => {
+-                            if (entity === closest) {
+-                                tempEvents.cleanup();
++                            if (entity === closest)
+                                 resolve();
+-                            }
++                        });
++                        tempEvents.subscribeTo('path_stop', () => {
++                            resolve((0, Util_1.error)('PathStopped', 'Collection path was stopped.'));
++                        });
++                        tempEvents.subscribeTo('goal_updated', (goal) => {
++                            if (goal !== pickupGoal)
++                                resolve((0, Util_1.error)('GoalChanged', 'Collection goal was changed.'));
++                        });
++                        tempEvents.subscribeTo('end', () => {
++                            resolve((0, Util_1.error)('BotEnded', 'Connection ended during collection.'));
+                         });
+                     });
+-                    yield bot.pathfinder.goto(new mineflayer_pathfinder_1.goals.GoalFollow(closest, 0));
+-                    yield waitForPickup;
++                    try {
++                        yield collectStep(bot, 'item-goto', closest, () => bot.pathfinder.goto(pickupGoal));
++                        // goto can resolve for an empty noPath result. Arrival also does
++                        // not guarantee an item can actually be picked up (obstruction/full bag).
++                        if (!closest.isValid)
++                            finishPickup();
++                        pickupTimer = setTimeout(() => {
++                            finishPickup((0, Util_1.error)('PickupTimeout', `Item ${closest.id} did not disappear within 3s after navigation.`));
++                        }, 3000);
++                        const pickupError = yield collectStep(bot, 'item-gone', closest, () => waitForPickup);
++                        if (pickupError)
++                            throw pickupError;
++                    }
++                    finally {
++                        clearTimeout(pickupTimer);
++                        tempEvents.cleanup();
++                    }
+                     break;
+                 }
+                 default: {
+@@ -71,7 +120,7 @@ function mineBlock(bot, block, options) {
+             options.targets.removeTarget(block);
+             return;
+         }
+-        yield bot.tool.equipForBlock(block, equipToolOptions);
++        yield collectStep(bot, 'tool', block, () => bot.tool.equipForBlock(block, equipToolOptions));
+         if (bot.heldItem !== null && !block.canHarvest(bot.heldItem.type)) {
+             options.targets.removeTarget(block);
+             return;
+@@ -83,9 +132,9 @@ function mineBlock(bot, block, options) {
+             }
+         });
+         try {
+-            yield bot.dig(block);
++            yield collectStep(bot, 'dig', block, () => bot.dig(block));
+             // Waiting for items to drop
+-            yield new Promise(resolve => {
++            yield collectStep(bot, 'drop-ticks', block, () => new Promise(resolve => {
+                 let remainingTicks = 10;
+                 tempEvents.subscribeTo('physicsTick', () => {
+                     remainingTicks--;
+@@ -94,7 +143,7 @@ function mineBlock(bot, block, options) {
+                         resolve();
+                     }
+                 });
+-            });
++            }));
+         }
+         finally {
+             tempEvents.cleanup();

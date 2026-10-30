@@ -1,0 +1,275 @@
+diff --git a/node_modules/mineflayer/lib/plugins/bed.js b/node_modules/mineflayer/lib/plugins/bed.js
+index 9b526f6..00a4b53 100644
+--- a/node_modules/mineflayer/lib/plugins/bed.js
++++ b/node_modules/mineflayer/lib/plugins/bed.js
+@@ -68,9 +68,13 @@ function inject (bot) {
+     if (!bot.isSleeping) {
+       throw new Error('already awake')
+     } else {
++      // dafeiyu 2026-10-28: on 26.1.2 action 2 is stop_sprinting and leaving the bed is stop_sleeping (0) - she could not get up.
++      // minecraft-data has no entityActionUsesStringMapper feature for 26.1, so the protocol table itself is read.
++      const named = bot.supportFeature('entityActionUsesStringMapper') ||
++        JSON.stringify(bot.registry.protocol?.play?.toServer?.types?.packet_entity_action ?? '').includes('"stop_sleeping"')
+       bot._client.write('entity_action', {
+         entityId: bot.entity.id,
+-        actionId: 2,
++        actionId: named ? 'stop_sleeping' : 2,
+         jumpBoost: 0
+       })
+     }
+diff --git a/node_modules/mineflayer/lib/plugins/craft.js b/node_modules/mineflayer/lib/plugins/craft.js
+index fb2766a..4e1b236 100644
+--- a/node_modules/mineflayer/lib/plugins/craft.js
++++ b/node_modules/mineflayer/lib/plugins/craft.js
+@@ -16,8 +16,10 @@ function inject (bot) {
+     }
+ 
+     try {
++      if (!craftingTable) await settleInventoryGrid()
+       for (let i = 0; i < count; i++) {
+         await craftOnce(recipe, craftingTable)
++        if (!craftingTable) await settleInventoryGrid()
+       }
+ 
+       if (windowCraftingTable) {
+@@ -26,16 +28,35 @@ function inject (bot) {
+         await bot._syncWindow(windowCraftingTable)
+         await bot.closeWindow(windowCraftingTable)
+         windowCraftingTable = undefined
++        if (bot.supportFeature('stateIdUsed')) await bot._syncWindow(bot.inventory)
+       }
+     } catch (err) {
+       if (windowCraftingTable) {
+         bot.closeWindow(windowCraftingTable)
+         windowCraftingTable = undefined
++      } else if (!craftingTable && !bot.interrupt_code) {
++        await settleInventoryGrid().catch(() => {})
+       }
+       throw new Error(err)
+     }
+   }
+ 
++  async function settleInventoryGrid () {
++    if (!bot.supportFeature('stateIdUsed')) return
++    const inv = bot.inventory
++    const empty = () => !inv.selectedItem && [1, 2, 3, 4].every(slot => !inv.slots[slot])
++    for (let attempt = 0; attempt < 3; attempt++) {
++      if (bot.interrupt_code) throw new Error('Crafting interrupted')
++      await bot._syncWindow(inv)
++      if (empty()) return
++      // Vanilla returns the personal grid and cursor on closing inventory.
++      // A preceding corrective window_items can finish a sync early: recheck.
++      bot._client.write('close_window', { windowId: 0 })
++    }
++    await bot._syncWindow(inv)
++    if (!empty()) throw new Error('Crafting inventory did not settle')
++  }
++
+   async function craftOnce (recipe, craftingTable) {
+     if (craftingTable) {
+       if (!windowCraftingTable) {
+@@ -243,4 +264,5 @@ function inject (bot) {
+   bot.craft = craft
+   bot.recipesFor = recipesFor
+   bot.recipesAll = recipesAll
++  bot._settleInventoryCraftingGrid = settleInventoryGrid
+ }
+diff --git a/node_modules/mineflayer/lib/plugins/digging.js b/node_modules/mineflayer/lib/plugins/digging.js
+index 5ae5552..af28eef 100644
+--- a/node_modules/mineflayer/lib/plugins/digging.js
++++ b/node_modules/mineflayer/lib/plugins/digging.js
+@@ -244,6 +244,9 @@ function inject (bot) {
+       enchantments = enchantments.concat(helmetEnchantments)
+     }
+ 
++    if (block.material === 'incorrect_for_wooden_tool')
++      block.material = 'mineable/pickaxe'
++
+     const creative = bot.game.gameMode === 'creative'
+     return block.digTime(
+       type,
+diff --git a/node_modules/mineflayer/lib/plugins/entities.js b/node_modules/mineflayer/lib/plugins/entities.js
+index 9fcb6f9..0c4dafd 100644
+--- a/node_modules/mineflayer/lib/plugins/entities.js
++++ b/node_modules/mineflayer/lib/plugins/entities.js
+@@ -495,7 +495,8 @@ function inject (bot) {
+       }
+ 
+       // Breathing (formerly in breath.js)
+-      if (metas.air_supply != null) {
++      // dafeiyu final-86: only the bot's own air - any fish, squid or zombie's air_supply was written into bot.oxygenLevel
++      if (metas.air_supply != null && entity === bot.entity) {
+         bot.oxygenLevel = Math.round(metas.air_supply / 15)
+         bot.emit('breath')
+       }
+@@ -778,6 +779,21 @@ function inject (bot) {
+     const passengerEntities = passengers.map((passengerId) => fetchEntity(passengerId))
+     const vehicle = entityId === -1 ? null : bot.entities[entityId]
+ 
++    // This packet replaces the passenger list. An empty list is the normal
++    // response to sneak-dismount; updating only the new riders leaves stale mounts.
++    if (vehicle) {
++      for (const passenger of [...vehicle.passengers]) {
++        if (passengers.includes(passenger.id)) continue
++        if (passenger.vehicle === vehicle) passenger.vehicle = null
++        vehicle.passengers.splice(vehicle.passengers.indexOf(passenger), 1)
++      }
++    }
++    if (bot.vehicle?.id === entityId && !passengers.includes(bot.entity.id)) {
++      const originalVehicle = bot.vehicle
++      bot.vehicle = null
++      bot.emit('dismount', originalVehicle)
++    }
++
+     for (const passengerEntity of passengerEntities) {
+       const originalVehicle = passengerEntity.vehicle
+       if (originalVehicle) {
+diff --git a/node_modules/mineflayer/lib/plugins/fishing.js b/node_modules/mineflayer/lib/plugins/fishing.js
+index 325be12..eb62aed 100644
+--- a/node_modules/mineflayer/lib/plugins/fishing.js
++++ b/node_modules/mineflayer/lib/plugins/fishing.js
+@@ -14,15 +14,27 @@ function inject (bot) {
+ 
+   let fishingTask = createDoneTask()
+   let lastBobber = null
++  const bitingIndex = bot.registry.entitiesByName.fishing_bobber?.metadataKeys?.indexOf('biting') ?? -1
+ 
+   bot._client.on('spawn_entity', (packet) => {
+-    if (packet.type === bobberId && !fishingTask.done && !lastBobber) {
++    if (packet.type === bobberId && !fishingTask.done && !lastBobber && (bitingIndex < 0 || packet.objectData === bot.entity.id)) {
+       lastBobber = bot.entities[packet.entityId]
+     }
+   })
+ 
++  // On versions with synced DATA_BITING, only the server's own hook state
++  // opens the catch window. Particles/sounds can come from another hook.
++  bot.on('entityUpdate', (entity) => {
++    if (bitingIndex < 0 || fishingTask.done || entity !== lastBobber) return
++    if (entity.metadata?.[bitingIndex] !== true) return
++    bot.activateItem()
++    lastBobber = undefined
++    fishingTask.finish()
++  })
++
+   bot._client.on('world_particles', (packet) => {
+     if (!lastBobber || fishingTask.done) return
++    if (bitingIndex >= 0) return
+ 
+     const pos = lastBobber.position
+ 
+diff --git a/node_modules/mineflayer/lib/plugins/inventory.js b/node_modules/mineflayer/lib/plugins/inventory.js
+index bab0eef..0ef611f 100644
+--- a/node_modules/mineflayer/lib/plugins/inventory.js
++++ b/node_modules/mineflayer/lib/plugins/inventory.js
+@@ -569,6 +569,26 @@ function inject (bot, { hideErrors }) {
+     return changedSlots
+   }
+ 
++  function consumedCraftingSlots (window, click, previousCount) {
++    const size = window.type === 'minecraft:inventory' ? 4 : window.type === 'minecraft:crafting' ? 9 : 0
++    if (!size || click.slot !== window.craftingResultSlot || previousCount <= 0) return []
++    if ((window.slots[click.slot]?.count || 0) >= previousCount) return []
++    if (window.selectedItem?.type !== click.item?.type) return []
++    const changed = []
++    for (let input = 1; input <= size; input++) {
++      const item = window.slots[input]
++      if (!item) continue
++      let remainder = null
++      if (item.count > 1) {
++        remainder = Item.fromNotch(Item.toNotch(item))
++        remainder.count--
++      }
++      window.updateSlot(input, remainder)
++      changed.push(input)
++    }
++    return changed
++  }
++
+   async function clickWindow (slot, mouseButton, mode) {
+     // if you click on the quick bar and have dug recently,
+     // wait a bit
+@@ -607,7 +627,9 @@ function inject (bot, { hideErrors }) {
+           // 5,
+           // 6
+         ].includes(click.mode)) {
++        const resultCount = click.item?.count || 0
+         changedSlots = window.acceptClick(click)
++        if (click.mode === 0) changedSlots.push(...consumedCraftingSlots(window, click, resultCount))
+       } else {
+         // this is used as a fallback
+         const oldSlots = JSON.parse(JSON.stringify(window.slots))
+@@ -702,6 +724,10 @@ function inject (bot, { hideErrors }) {
+     if (bot.inventory.selectedItem) {
+       await clickWindow(sourceSlot, 0, 0)
+     }
++    // Late cursor corrections for the first click can arrive after our local
++    // prediction of the final click. Reconcile the completed move as a whole.
++    // dafeiyu: a sync that times out only leaves the count as it was - it must not fail the equip (a sword in a fight).
++    if (bot.supportFeature('stateIdUsed')) await syncWindow(bot.currentWindow || bot.inventory).catch(() => {})
+   }
+ 
+   bot._client.on('transaction', (packet) => {
+@@ -865,7 +891,15 @@ function inject (bot, { hideErrors }) {
+       changedSlots: [],
+       cursorItem: Item.toNotch(window.selectedItem)
+     })
+-    await synced
++    await withTimeout(synced, WINDOW_TIMEOUT)
++    // A queued corrective window_items can satisfy `synced` before the reply
++    // to our click. REQUEST_STATS is processed on the game thread too; its
++    // response orders all preceding menu updates without a fixed sleep.
++    const settled = once(bot._client, 'statistics')
++    bot._client.write('client_command', {
++      actionId: bot.registry.version['>=']('26.1') ? 'request_stats' : 1
++    })
++    await withTimeout(settled, WINDOW_TIMEOUT)
+   }
+   bot._syncWindow = syncWindow
+ 
+diff --git a/node_modules/mineflayer/lib/plugins/physics.js b/node_modules/mineflayer/lib/plugins/physics.js
+index bd36f96..538f57d 100644
+--- a/node_modules/mineflayer/lib/plugins/physics.js
++++ b/node_modules/mineflayer/lib/plugins/physics.js
+@@ -252,9 +252,13 @@ function inject (bot, { physicsEnabled, maxCatchupTicks }) {
+     if (control === 'jump' && state) {
+       bot.jumpQueued = true
+     } else if (control === 'sprint') {
++      // dafeiyu 2026-10-28: on 26.1.2 ids 3/4 are start/stop_riding_jump (sprint is 1/2), and minecraft-data has no
++      // entityActionUsesStringMapper feature for 26.1 - so she never sprinted. The protocol table itself is read, as in bed.js wake().
++      const named = bot.supportFeature('entityActionUsesStringMapper') ||
++        JSON.stringify(bot.registry.protocol?.play?.toServer?.types?.packet_entity_action ?? '').includes('"start_sprinting"')
+       bot._client.write('entity_action', {
+         entityId: bot.entity.id,
+-        actionId: bot.supportFeature('entityActionUsesStringMapper')
++        actionId: named
+           ? (state ? 'start_sprinting' : 'stop_sprinting')
+           : (state ? 3 : 4),
+         jumpBoost: 0
+diff --git a/node_modules/mineflayer/lib/plugins/place_block.js b/node_modules/mineflayer/lib/plugins/place_block.js
+index dc86e1e..4582967 100644
+--- a/node_modules/mineflayer/lib/plugins/place_block.js
++++ b/node_modules/mineflayer/lib/plugins/place_block.js
+@@ -26,7 +26,7 @@ function inject (bot) {
+     const onAck = () => { acked = true }
+     bot.on(`blockUpdate:${referenceBlock.position}`, onAck)
+     const [, newBlock] = await onceWithCleanup(bot, `blockUpdate:${dest}`, {
+-      timeout: 5000,
++      timeout: 500,
+       // oldBlock and newBlock are both null when the world unloads
+       checkCondition: (oldBlock, newBlock) => !oldBlock || !newBlock || oldBlock.type !== newBlock.type || (acked && inFlight.get(key) === 1)
+     }).catch((err) => {
+diff --git a/node_modules/mineflayer/lib/plugins/villager.js b/node_modules/mineflayer/lib/plugins/villager.js
+index ce5760f..dba61bd 100644
+--- a/node_modules/mineflayer/lib/plugins/villager.js
++++ b/node_modules/mineflayer/lib/plugins/villager.js
+@@ -71,7 +71,9 @@ function inject (bot, { version }) {
+ 
+   async function openVillager (villagerEntity) {
+     const villagerType = entitiesByName.villager ? entitiesByName.villager.id : entitiesByName.Villager.id
+-    assert.strictEqual(villagerEntity.entityType, villagerType)
++    const traderType = entitiesByName.wandering_trader?.id
++    assert.ok(villagerEntity.entityType === villagerType ||
++      (traderType !== undefined && villagerEntity.entityType === traderType), 'Entity is not a villager or wandering trader')
+     let ready = false
+ 
+     const villagerPromise = bot.openEntity(villagerEntity)

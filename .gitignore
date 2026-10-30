@@ -1,7 +1,6 @@
 .vscode/
 .idea/
 node_modules/
-package-lock.json
 code_records/
 scratch.js
 bots/**/action-code/**
@@ -28,3 +27,16 @@ tasks/construction_tasks/train/**
 server_data*
 **/.DS_Store
 src/mindcraft-py/__pycache__/
+dev/
+keys.json
+logs/
+/runtime/
+/launcher.settings.json
+/node22/
+/大肥鱼启动器.exe
+/worlds/
+/world-backups/
+/worlds-archive/
+/.trash/
+/server/
+/java/

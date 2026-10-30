@@ -47,6 +47,9 @@ export class Examples {
         if (this.select_num === 0)
             return [];
 
+        // owner 10-31: with no working embedding model every example goes in (hers are 8 short ones). The word overlap below keeps only
+        // a-z, so for Chinese it scored every example the same and always gave the first two.
+        if (!this.model) return JSON.parse(JSON.stringify(this.examples));
         let turn_text = this.turnsToText(turns);
         if (this.model !== null) {
             let embedding = await this.model.embed(turn_text);

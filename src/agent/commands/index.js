@@ -1,6 +1,7 @@
 import { getBlockId, getItemId } from "../../utils/mcdata.js";
 import { actionsList } from './actions.js';
 import { queryList } from './queries.js';
+import { topLearned, skillNote } from '../learned_skills.js';
 
 let suppressNoDomainWarning = true;
 
@@ -8,6 +9,11 @@ const commandList = queryList.concat(actionsList);
 const commandMap = {};
 for (let command of commandList) {
     commandMap[command.name] = command;
+}
+
+/** Owner pivot 2026-10-25 (docs/log-spec.md): the commands she can really choose from right now, for the [decision] options. */
+export function availableCommandNames(agent) {
+    return Object.keys(commandMap).filter((name) => !(agent?.blocked_actions || []).includes(name));
 }
 
 export function getCommand(name) {
@@ -26,7 +32,9 @@ export function blacklistCommands(commands) {
     }
 }
 
-const commandRegex = /!(\w+)(?:\(((?:-?\d+(?:\.\d+)?|true|false|"[^"]*")(?:\s*,\s*(?:-?\d+(?:\.\d+)?|true|false|"[^"]*"))*)\))?/
+// final-21 19:2x (DeepSeek #3515): she wrote "！placeHere(...)" with the full-width ！ for 5 minutes - every command fell through as chat.
+// Accept it as "!". \w is ASCII, so ordinary Chinese ("好的！去打怪") never reads as a command.
+const commandRegex = /[!！](\w+)(?:\(((?:-?\d+(?:\.\d+)?|true|false|"[^"]*")(?:\s*,\s*(?:-?\d+(?:\.\d+)?|true|false|"[^"]*"))*)\))?/
 const argRegex = /-?\d+(?:\.\d+)?|true|false|"[^"]*"/g;
 
 export function containsCommand(message) {
@@ -111,7 +119,7 @@ export function parseCommandMessage(message) {
     const paramNames = commandParamNames(command);
     
     if (args.length !== params.length)
-        return `Command ${command.name} was given ${args.length} args, but requires ${params.length} args.`;
+        return argCountError(command, args.length);
 
     
     for (let i = 0; i < args.length; i++) {
@@ -209,6 +217,13 @@ function numParams(command) {
     return commandParams(command).length;
 }
 
+// The wrong-number-of-arguments reply names what is missing (bow arena 10-26: "我也看不到是参数问题还是周围真没有").
+function argCountError(command, given) {
+    const params = command.params || {}, names = Object.keys(params);
+    const list = names.map((n) => `${n} (${params[n].type}${params[n].description ? ': ' + params[n].description : ''})`).join('; ');
+    return `Command ${command.name} was given ${given} args, but requires ${names.length} args${names.length ? ': ' + list : ''}. Nothing was done. Write it as ${command.name}(${names.map((n) => params[n].type === 'string' || params[n].type === 'ItemName' || params[n].type === 'BlockName' ? `"${n}"` : n).join(', ')}).`;
+}
+
 export async function executeCommand(agent, message) {
     let parsed = parseCommandMessage(message);
     if (typeof parsed === 'string')
@@ -221,7 +236,7 @@ export async function executeCommand(agent, message) {
             numArgs = parsed.args.length;
         }
         if (numArgs !== numParams(command))
-            return `Command ${command.name} was given ${numArgs} args, but requires ${numParams(command)} args.`;
+            return argCountError(command, numArgs);
         else {
             const result = await command.perform(agent, ...parsed.args);
             return result;
@@ -255,5 +270,8 @@ export function getCommandDocs(agent) {
             }
         }
     }
+    // dafeiyu (PLAN H): what she has learned herself, best first, so she knows she can reuse it.
+    const learned = topLearned(agent.name, 10);
+    if (learned.length) docs += '\nYour own learned skills (run with !useSkill("name")):\n' + learned.map((s) => `${s.name}: ${s.description} (worked ${s.successes}, failed ${s.failures})${skillNote(agent.name, s, agent.memoryS?.worldStatus?.()?.key, agent.bot?.entity?.position)}`).join('\n') + '\n';
     return docs + '*\n';
 }

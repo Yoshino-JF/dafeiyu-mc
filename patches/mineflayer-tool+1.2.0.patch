@@ -1,0 +1,14 @@
+diff --git a/node_modules/mineflayer-tool/lib/Tool.js b/node_modules/mineflayer-tool/lib/Tool.js
+index a51b67f..082a73e 100644
+--- a/node_modules/mineflayer-tool/lib/Tool.js
++++ b/node_modules/mineflayer-tool/lib/Tool.js
+@@ -116,7 +116,8 @@ class Tool {
+             }
+             itemList.sort((a, b) => this.getDigTime(block, a) - this.getDigTime(block, b));
+             if (itemList.length === 0) {
+-                if (options.getFromChest != null && options.getFromChest) {
++                // dafeiyu final-88: with no chest locations retrieveTools returns at once and this called itself forever (heap overflow)
++                if (options.getFromChest != null && options.getFromChest && this.chestLocations.length > 0) {
+                     try {
+                         yield (0, Inventory_1.retrieveTools)(this.bot, {
+                             toolFilter: Inventory_1.standardToolFilter,

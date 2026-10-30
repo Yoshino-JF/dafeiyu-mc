@@ -1,0 +1,36 @@
+# Paths left out of the release copy (three-party list, owner 2026-10-28). Nothing here is deleted: the originals stay in this
+# project. The release is a copy of the project minus these paths. bots/DaFeiYu/ goes as factory memory (dev/make-release.mjs: her skills that work anywhere, fight style, modes - owner 10-31); her notes on people, places and what she lived
+# through stay on this machine.
+
+# development and test material
+dev/
+src/agent/memory/test-*.mjs
+src/agent/test-failure-reasons.mjs
+src/agent/memory/combat-record.mjs
+profiles/dafeiyu-dev.json
+docs/*-2026-*.md
+docs/*.mjs
+launcher/DONE-2966.md
+launcher/progress-2966.md
+release-exclude.txt
+
+# produced while running on this machine
+logs/
+runtime/
+bots/LauncherTest/
+worlds/
+world-backups/
+worlds-archive/
+.git/
+.trash/
+
+# the owner's own keys and settings (the release ships keys.example.json)
+keys.json
+launcher.settings.json
+
+# the server core ships as Paper's server.jar alone; libraries/versions/cache are built on the user's first start (Mojang's server
+# file may not be passed on), so whatever this machine prepared stays here
+server/libraries/
+server/versions/
+server/cache/
+server/logs/

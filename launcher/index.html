@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>大肥鱼启动器</title>
+<link rel="stylesheet" href="/style.css">
+<script type="module" src="/app.js"></script>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="side">
+    <div class="brand-mark" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M7 25c0-9 8-15 17-12 5 1 8 5 10 9l9-7-1 14-9-3c-3 9-11 13-19 8-4-2-7-5-7-9Z" fill="currentColor"/><circle cx="18" cy="23" r="2" fill="#142c45"/><path d="M23 9c-1-5 3-7 5-4-3-1-3 2-3 4M19 9c-4-1-5-4-3-6 0 3 2 4 4 4" fill="currentColor"/></svg></div><h1 class="brand">大肥鱼</h1>
+    <nav>
+      <button class="active" data-page="home"><svg><use href="#i-home"/></svg>启程</button>
+      <button data-page="worlds"><svg><use href="#i-world"/></svg>我的世界</button>
+      <div class="nav-label">陪玩设置</div>
+      <button data-page="player"><svg><use href="#i-link"/></svg>连接</button>
+      <button data-page="models"><svg><use href="#i-model"/></svg>模型</button>
+      <button data-page="voice"><svg><use href="#i-voice"/></svg>语音</button>
+      <button data-page="prompt"><svg><use href="#i-heart"/></svg>人设</button>
+      <button data-page="skin"><svg><use href="#i-picture"/></svg>外观</button>
+      <button data-page="logs"><svg><use href="#i-log"/></svg>日志</button>
+    </nav>
+    <div class="side-foot"><div><span id="side-dot" class="dot"></span><span id="side-state">未启动</span></div></div>
+  </aside>
+
+  <main>
+    <section id="home" class="page home active">
+      <div class="home-top"><span class="glass-tag" id="home-mode">外部服务器</span></div>
+      <div class="dock">
+        <div class="dock-info">
+          <div class="dock-title"><span id="state-dot" class="dot"></span><strong id="status">正在读取配置</strong></div>
+          <div id="home-world-name" class="home-world-name" hidden></div>
+          <div id="target" class="muted"></div>
+          <dl id="vitals" class="vitals" hidden>
+            <div><dt>生命</dt><dd id="v-health"></dd></div>
+            <div><dt>饥饿</dt><dd id="v-food"></dd></div>
+            <div><dt>位置</dt><dd id="v-pos"></dd></div>
+            <div><dt>时间</dt><dd id="v-time"></dd></div>
+            <div class="wide"><dt>正在</dt><dd id="v-doing"></dd></div>
+          </dl>
+          <div id="last-said" class="last-said" hidden></div>
+          <div id="error-row" class="error" hidden><span id="error"></span> <button id="to-log" class="link">看日志</button></div>
+        </div>
+        <div class="dock-actions">
+          <button id="check" class="btn">检查连接</button>
+          <button id="restart" class="btn" hidden>重新进入</button>
+          <button id="stop" class="btn big" hidden>停止陪玩</button>
+          <button id="start" class="btn primary big">启动陪玩</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="worlds" class="page worlds-page">
+      <header class="page-head"><div><h2>我的世界<span id="world-count" class="count">0</span></h2><p>新建或导入存档。</p></div><button id="world-create" class="btn primary">＋ 新建世界</button></header>
+      <div class="world-toolbar"><div class="tabs"><button class="tab active" data-world-filter="active">世界列表</button><button class="tab" data-world-filter="archived">已归档</button></div><input id="world-search" type="search" placeholder="查找世界…" aria-label="查找世界"><button id="world-import" class="btn">导入存档</button><button id="world-folder" class="btn icon-btn" title="打开世界文件夹" aria-label="打开世界文件夹"><svg><use href="#i-folder"/></svg></button></div>
+      <div class="world-scroll"><div id="world-connection" class="connection-banner"></div><div id="world-list" class="world-list"></div><details class="engine-panel"><summary><span><svg><use href="#i-settings"/></svg>本地服务器设置</span><span id="engine-state" class="muted"></span></summary><p class="muted">核心与 Java 只需配置一次，所有本地世界共用。服务器仅监听本机；外部服务器请在“连接”中设置。</p><form id="engine-form"><label>服务器核心<input name="jar" placeholder="server.jar 的完整路径" required></label><div class="form-grid"><label>Java 路径<input name="java" placeholder="java 或 java.exe 的完整路径" required></label><label>服务器内存（MB）<input name="memoryMb" type="number" min="1024" max="16384" step="256" required></label></div><button class="btn">保存服务器设置</button></form></details><p class="storage-note" id="world-storage"></p></div>
+    </section>
+
+    <section id="settings" class="page form-page">
+      <header class="page-head"><div><h2 id="page-title"></h2><p id="page-description"></p></div></header>
+      <form id="fields" class="form" autocomplete="off"></form>
+      <footer class="savebar"><span id="dirty" class="muted">已保存</span><button id="save" class="btn primary">保存设置</button></footer>
+    </section>
+
+    <section id="skin" class="page form-page">
+      <header class="page-head"><div><h2>外观</h2><p>主页背景图，只保存在这台电脑上。</p></div></header>
+      <div class="form">
+        <div class="group">
+          <img id="wallpaper-preview" class="preview" src="/wallpaper.png" alt="当前壁纸">
+          <div class="row-actions">
+            <label class="btn primary file-picker">选择图片<input id="wallpaper-file" type="file" accept="image/png,image/jpeg,image/webp"></label>
+            <button id="wallpaper-default" class="btn">恢复默认</button>
+            <span class="muted">PNG、JPEG 或 WebP，不超过 8 MB。</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="logs" class="page form-page logs-page">
+      <header class="page-head">
+        <div><h2>日志</h2></div>
+        <div class="tabs"><button class="tab active" data-log="chat">对话</button><button class="tab" data-log="raw">运行日志</button></div>
+      </header>
+      <div id="log-output" class="log" tabindex="0"></div>
+      <form id="chat-form" class="send">
+        <input id="chat" placeholder="以你的名字给她发一句话" maxlength="3000">
+        <button class="btn primary">发送</button>
+      </form>
+    </section>
+  </main>
+</div>
+<div id="toast" role="status"></div>
+<dialog id="world-dialog" aria-labelledby="world-dialog-title"><form id="world-dialog-form"><header class="dialog-head"><div><h2 id="world-dialog-title">新建世界</h2></div><button type="button" class="dialog-close" aria-label="关闭">×</button></header><div id="world-dialog-content" class="dialog-content"></div><div id="world-dialog-error" class="dialog-error" role="alert" hidden></div><footer class="dialog-foot"><button type="button" class="btn dialog-close">取消</button><button type="submit" id="world-dialog-submit" class="btn primary">创建世界</button></footer></form></dialog>
+<svg class="svg-defs" xmlns="http://www.w3.org/2000/svg"><defs>
+<symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10H3Z M9 20v-7h6v7"/></symbol>
+<symbol id="i-world" viewBox="0 0 24 24"><path d="m12 2 9 5v10l-9 5-9-5V7Z M3 7l9 5 9-5 M12 12v10 M7.5 4.5l9 5"/></symbol>
+<symbol id="i-link" viewBox="0 0 24 24"><path d="m9 15 6-6 M9 16l-2 2a4 4 0 0 1-6-6l5-5a4 4 0 0 1 6 0 M15 8l2-2a4 4 0 0 1 6 6l-5 5a4 4 0 0 1-6 0" transform="translate(1) scale(.9)"/></symbol>
+<symbol id="i-model" viewBox="0 0 24 24"><path d="M9 3h6l1 4 4 1v8l-4 1-1 4H9l-1-4-4-1V8l4-1Z M9 9h6v6H9Z"/></symbol>
+<symbol id="i-voice" viewBox="0 0 24 24"><path d="M9 5a3 3 0 0 1 6 0v7a3 3 0 0 1-6 0Z M5 11v1a7 7 0 0 0 14 0v-1 M12 19v3 M8 22h8"/></symbol>
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 21 3 12A6 6 0 0 1 12 4a6 6 0 0 1 9 8Z"/></symbol>
+<symbol id="i-picture" viewBox="0 0 24 24"><path d="M3 3h18v18H3Z M3 17l5-5 4 4 4-6 5 7"/><circle cx="8" cy="8" r="1"/></symbol>
+<symbol id="i-log" viewBox="0 0 24 24"><path d="M4 3h16v14H9l-5 4Z M8 7h8 M8 11h6"/></symbol>
+<symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6h7l2 3h9v11H3Z M3 9V4h7l2 2h9v3"/></symbol>
+<symbol id="i-settings" viewBox="0 0 24 24"><path d="M4 6h16 M4 12h16 M4 18h16 M8 3v6 M16 9v6 M10 15v6"/></symbol>
+</defs></svg>
+</body>
+</html>

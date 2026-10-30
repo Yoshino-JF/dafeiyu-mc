@@ -1,5 +1,9 @@
 import { Agent } from '../agent/agent.js';
 import { serverProxy } from '../agent/mindserver_proxy.js';
+import { setLogOwner } from '../agent/dafeiyu_log.js';
+
+// dafeiyu: this is her own agent process - its [decision]/[act]/[lifecycle] lines go to logs/agent.ndjson (dafeiyu_log.js).
+setLogOwner();
 import yargs from 'yargs';
 
 const args = process.argv.slice(2);

@@ -19,7 +19,12 @@ export function getNearestFreeSpace(bot, size=1, distance=8) {
         maxDistance: distance,
         count: 1000
     });
+    // 10-29 lab: at the bottom of her 1x1 shaft the "nearest free space" was the cell her feet were in, so the crafting table could
+    // not go down and the craft threw. A cell her body is in is not free.
+    const feet = bot.entity?.position?.floored?.();
+    const inBody = (p) => feet && p.x === feet.x && p.z === feet.z && (p.y === feet.y || p.y === feet.y + 1);
     for (let i = 0; i < empty_pos.length; i++) {
+        if (inBody(empty_pos[i])) continue;
         let empty = true;
         for (let x = 0; x < size; x++) {
             for (let z = 0; z < size; z++) {
@@ -193,6 +198,27 @@ export function getNearbyEntities(bot, maxDistance=16) {
 
 export function getNearestEntityWhere(bot, predicate, maxDistance=16) {
     return bot.nearestEntity(entity => predicate(entity) && bot.entity.position.distanceTo(entity.position) < maxDistance);
+}
+
+/**
+ * Not a corpse. A mob stays in bot.entities for its ~1 s death animation; GPT's paired lab (#3398) caught self_defense re-selecting a
+ * zombie 19 ms after !fight saw it die and swinging at the body. Known deaths (entityDead) and a server health of 0 are excluded.
+ * @param {Bot} bot
+ * @param {Entity} entity
+ * @returns {boolean}
+ */
+export function isAlive(bot, entity) {
+    if (!entity) return false;
+    if (!bot._knownDead) {
+        bot._knownDead = new Set();
+        bot.on?.('entityDead', (e) => { if (e?.id !== undefined) bot._knownDead.add(e.id); });
+        bot.on?.('entityGone', (e) => { if (e?.id !== undefined) bot._knownDead.delete(e.id); });
+    }
+    if (bot._knownDead.has(entity.id)) return false;
+    const keys = bot.registry?.entitiesByName?.[String(entity.name || '').replace(/^minecraft:/, '')]?.metadataKeys;
+    const i = Array.isArray(keys) ? keys.indexOf('health') : -1;
+    const hp = i >= 0 ? entity.metadata?.[i] : undefined;
+    return !(Number.isFinite(hp) && hp <= 0);
 }
 
 

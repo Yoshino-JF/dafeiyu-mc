@@ -97,6 +97,27 @@ export function initBot(username) {
         return originalWrite(name, data);
     };
 
+    // physicsTick fires before Mineflayer sends this tick's movement packet.
+    // A bucket ray must use the current server position, not the previous tick.
+    // Only the explicit clutch use calls this; ordinary movement stays throttled.
+    bot.flushPositionForItemUse = () => {
+        const e = bot.entity;
+        if (!e || ![e.position.x, e.position.y, e.position.z, e.yaw, e.pitch].every(Number.isFinite)) return false;
+        if (pendingPositionPacket) {
+            clearTimeout(pendingPositionPacket);
+            pendingPositionPacket = null;
+        }
+        lastPositionUpdate = Date.now();
+        originalWrite('position_look', {
+            x: e.position.x, y: e.position.y, z: e.position.z,
+            yaw: Math.fround((Math.PI - e.yaw) * 180 / Math.PI),
+            pitch: Math.fround(-e.pitch * 180 / Math.PI),
+            onGround: e.onGround,
+            flags: { onGround: e.onGround, hasHorizontalCollision: undefined }
+        });
+        return true;
+    };
+
     // Suppress PartialReadError for non-critical packets
     // Paper servers sometimes send packets that node-minecraft-protocol
     // can't fully parse (scoreboard, resource_pack, custom_payload, etc.)
@@ -128,8 +149,20 @@ export function initBot(username) {
         mcdata = minecraftData(mc_version);
         Item = prismarine_items(mc_version);
     });
+    followCursorPacket(bot);
 
     return bot;
+}
+
+// 26.1 can send the item on the cursor in its own packet, which mineflayer 4.39 does not handle, so the cursor was never updated and
+// the item looked gone from her bag (GPT #3581). It belongs to the window in use.
+export function followCursorPacket(bot) {
+    let CursorItem = null;
+    bot._client.on('set_cursor_item', (packet) => {
+        CursorItem ||= prismarine_items(bot.registry || bot.version);
+        const window = bot.currentWindow || bot.inventory;
+        if (window) window.selectedItem = CursorItem.fromNotch(packet.contents);
+    });
 }
 
 export function isHuntable(mob) {

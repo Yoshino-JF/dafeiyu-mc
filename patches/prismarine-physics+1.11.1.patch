@@ -1,0 +1,11 @@
+diff --git a/node_modules/prismarine-physics/index.js b/node_modules/prismarine-physics/index.js
+--- a/node_modules/prismarine-physics/index.js
++++ b/node_modules/prismarine-physics/index.js
+@@ -73,6 +73,6 @@
+     ladderMaxSpeed: 0.15,
+     ladderClimbSpeed: 0.2,
+-    playerHalfWidth: 0.3,
++    playerHalfWidth: Math.fround(0.6) / 2, // Match Java's float entity width; double 0.3 clips block faces on the server.
+     playerHeight: 1.8,
+     waterInertia: 0.8,
+     lavaInertia: 0.5,

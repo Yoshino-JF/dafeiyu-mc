@@ -1,0 +1,5608 @@
+{
+  "igloo/bottom": {
+    "id": "minecraft:igloo/bottom",
+    "size": [
+      7,
+      6,
+      9
+    ],
+    "entry": [
+      3,
+      2,
+      7
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          0
+        ],
+        "name": "stone"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          6
+        ],
+        "name": "stone_bricks"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          7
+        ],
+        "name": "mossy_stone_bricks"
+      },
+      {
+        "pos": [
+          0,
+          2,
+          3
+        ],
+        "name": "cracked_stone_bricks"
+      },
+      {
+        "pos": [
+          6,
+          2,
+          4
+        ],
+        "name": "stone_bricks"
+      },
+      {
+        "pos": [
+          4,
+          3,
+          8
+        ],
+        "name": "stone_bricks"
+      },
+      {
+        "pos": [
+          2,
+          4,
+          8
+        ],
+        "name": "stone_bricks"
+      },
+      {
+        "pos": [
+          3,
+          5,
+          6
+        ],
+        "name": "stone_bricks"
+      },
+      {
+        "pos": [
+          5,
+          2,
+          6
+        ],
+        "name": "brewing_stand"
+      }
+    ],
+    "materialBudget": 90,
+    "blockCount": 180,
+    "cleanup": [
+      {
+        "pos": [
+          1,
+          2,
+          6
+        ],
+        "name": "air"
+      }
+    ],
+    "note": "原版雪屋地下室带笼中村民、僵尸村民和空箱子；不自动连接地面的梯井，需要自己挖通道或选 cave。"
+  },
+  "village/desert/houses/desert_small_house_1": {
+    "id": "minecraft:village/desert/houses/desert_small_house_1",
+    "size": [
+      6,
+      6,
+      5
+    ],
+    "entry": [
+      1,
+      1,
+      2
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          2
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          4
+        ],
+        "name": "sand"
+      },
+      {
+        "pos": [
+          1,
+          1,
+          4
+        ],
+        "name": "sandstone"
+      },
+      {
+        "pos": [
+          1,
+          2,
+          3
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          1,
+          3,
+          2
+        ],
+        "name": "sandstone_slab"
+      },
+      {
+        "pos": [
+          1,
+          4,
+          2
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          5,
+          2,
+          2
+        ],
+        "name": "potted_cactus"
+      },
+      {
+        "pos": [
+          3,
+          5,
+          0
+        ],
+        "name": "sandstone_slab"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          3
+        ],
+        "name": "cyan_bed"
+      }
+    ],
+    "materialBudget": 59,
+    "blockCount": 117,
+    "cleanup": [
+      {
+        "pos": [
+          3,
+          0,
+          2
+        ],
+        "name": "smooth_sandstone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          2
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/desert/houses/desert_small_house_2": {
+    "id": "minecraft:village/desert/houses/desert_small_house_2",
+    "size": [
+      7,
+      6,
+      5
+    ],
+    "entry": [
+      2,
+      1,
+      2
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "sand"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          2
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          2,
+          1,
+          4
+        ],
+        "name": "cut_sandstone"
+      },
+      {
+        "pos": [
+          2,
+          2,
+          4
+        ],
+        "name": "cut_sandstone"
+      },
+      {
+        "pos": [
+          3,
+          3,
+          0
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          2,
+          4,
+          4
+        ],
+        "name": "cut_sandstone"
+      },
+      {
+        "pos": [
+          2,
+          1,
+          2
+        ],
+        "name": "jungle_door"
+      },
+      {
+        "pos": [
+          1,
+          4,
+          2
+        ],
+        "name": "smooth_sandstone_slab"
+      },
+      {
+        "pos": [
+          5,
+          1,
+          3
+        ],
+        "name": "green_bed"
+      }
+    ],
+    "materialBudget": 67,
+    "blockCount": 134,
+    "cleanup": [
+      {
+        "pos": [
+          0,
+          0,
+          3
+        ],
+        "name": "sand",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          1,
+          0,
+          1
+        ],
+        "name": "sand",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          2
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/desert/houses/desert_small_house_3": {
+    "id": "minecraft:village/desert/houses/desert_small_house_3",
+    "size": [
+      5,
+      5,
+      6
+    ],
+    "entry": [
+      2,
+      1,
+      4
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "sand"
+      },
+      {
+        "pos": [
+          2,
+          0,
+          2
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          3
+        ],
+        "name": "sand"
+      },
+      {
+        "pos": [
+          3,
+          1,
+          4
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          2,
+          2,
+          0
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          1,
+          3,
+          4
+        ],
+        "name": "smooth_sandstone_slab"
+      },
+      {
+        "pos": [
+          0,
+          3,
+          2
+        ],
+        "name": "smooth_sandstone_slab"
+      },
+      {
+        "pos": [
+          3,
+          3,
+          5
+        ],
+        "name": "jungle_button"
+      },
+      {
+        "pos": [
+          3,
+          1,
+          2
+        ],
+        "name": "green_bed"
+      }
+    ],
+    "materialBudget": 55,
+    "blockCount": 109,
+    "cleanup": [
+      {
+        "pos": [
+          2,
+          0,
+          1
+        ],
+        "name": "smooth_sandstone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          2,
+          1,
+          5
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/desert/houses/desert_small_house_4": {
+    "id": "minecraft:village/desert/houses/desert_small_house_4",
+    "size": [
+      5,
+      5,
+      5
+    ],
+    "entry": [
+      2,
+      1,
+      4
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "sand"
+      },
+      {
+        "pos": [
+          2,
+          0,
+          2
+        ],
+        "name": "terracotta"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          0
+        ],
+        "name": "cut_sandstone"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          3
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          4,
+          2,
+          1
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          3,
+          3,
+          0
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          4,
+          4,
+          0
+        ],
+        "name": "terracotta"
+      },
+      {
+        "pos": [
+          1,
+          4,
+          4
+        ],
+        "name": "smooth_sandstone_stairs"
+      },
+      {
+        "pos": [
+          2,
+          1,
+          1
+        ],
+        "name": "cyan_bed"
+      }
+    ],
+    "materialBudget": 51,
+    "blockCount": 101,
+    "cleanup": [
+      {
+        "pos": [
+          3,
+          0,
+          2
+        ],
+        "name": "smooth_sandstone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          1,
+          4
+        ],
+        "name": "smooth_sandstone",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/desert/houses/desert_small_house_5": {
+    "id": "minecraft:village/desert/houses/desert_small_house_5",
+    "size": [
+      5,
+      6,
+      6
+    ],
+    "entry": [
+      2,
+      1,
+      1
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "sand"
+      },
+      {
+        "pos": [
+          2,
+          0,
+          2
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          5
+        ],
+        "name": "sand"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          3
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          4,
+          2,
+          2
+        ],
+        "name": "cut_sandstone"
+      },
+      {
+        "pos": [
+          4,
+          3,
+          2
+        ],
+        "name": "cut_sandstone"
+      },
+      {
+        "pos": [
+          2,
+          4,
+          1
+        ],
+        "name": "cut_sandstone"
+      },
+      {
+        "pos": [
+          4,
+          4,
+          5
+        ],
+        "name": "cut_sandstone"
+      },
+      {
+        "pos": [
+          3,
+          3,
+          0
+        ],
+        "name": "jungle_button"
+      }
+    ],
+    "materialBudget": 59,
+    "blockCount": 118,
+    "cleanup": [
+      {
+        "pos": [
+          3,
+          0,
+          3
+        ],
+        "name": "smooth_sandstone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          2,
+          1,
+          0
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/desert/houses/desert_small_house_6": {
+    "id": "minecraft:village/desert/houses/desert_small_house_6",
+    "size": [
+      6,
+      18,
+      5
+    ],
+    "entry": [
+      1,
+      1,
+      2
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "sand"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          3
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          1,
+          4,
+          0
+        ],
+        "name": "cut_sandstone"
+      },
+      {
+        "pos": [
+          2,
+          6,
+          4
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          5,
+          8,
+          0
+        ],
+        "name": "cut_sandstone"
+      },
+      {
+        "pos": [
+          1,
+          11,
+          2
+        ],
+        "name": "cut_sandstone"
+      },
+      {
+        "pos": [
+          3,
+          13,
+          4
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          5,
+          15,
+          0
+        ],
+        "name": "cut_sandstone"
+      }
+    ],
+    "materialBudget": 163,
+    "blockCount": 325,
+    "cleanup": [
+      {
+        "pos": [
+          2,
+          0,
+          3
+        ],
+        "name": "smooth_sandstone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          2
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/desert/houses/desert_small_house_7": {
+    "id": "minecraft:village/desert/houses/desert_small_house_7",
+    "size": [
+      8,
+      5,
+      7
+    ],
+    "entry": [
+      4,
+      1,
+      1
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "sand"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          2
+        ],
+        "name": "sand"
+      },
+      {
+        "pos": [
+          6,
+          0,
+          3
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          6,
+          1,
+          0
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          7,
+          2,
+          5
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          7,
+          3,
+          5
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          1
+        ],
+        "name": "jungle_door"
+      },
+      {
+        "pos": [
+          5,
+          3,
+          3
+        ],
+        "name": "smooth_sandstone_slab"
+      }
+    ],
+    "materialBudget": 75,
+    "blockCount": 149,
+    "cleanup": [
+      {
+        "pos": [
+          5,
+          0,
+          3
+        ],
+        "name": "smooth_sandstone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          1
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/desert/houses/desert_small_house_8": {
+    "id": "minecraft:village/desert/houses/desert_small_house_8",
+    "size": [
+      5,
+      5,
+      5
+    ],
+    "entry": [
+      2,
+      1,
+      0
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "sand"
+      },
+      {
+        "pos": [
+          2,
+          0,
+          4
+        ],
+        "name": "sand"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          2
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          4
+        ],
+        "name": "terracotta"
+      },
+      {
+        "pos": [
+          4,
+          2,
+          2
+        ],
+        "name": "smooth_sandstone_slab"
+      },
+      {
+        "pos": [
+          4,
+          3,
+          1
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          2,
+          3,
+          4
+        ],
+        "name": "smooth_sandstone_slab"
+      },
+      {
+        "pos": [
+          2,
+          4,
+          3
+        ],
+        "name": "smooth_sandstone_slab"
+      }
+    ],
+    "materialBudget": 53,
+    "blockCount": 106,
+    "cleanup": [
+      {
+        "pos": [
+          2,
+          0,
+          2
+        ],
+        "name": "smooth_sandstone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          1,
+          1,
+          0
+        ],
+        "name": "smooth_sandstone",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/plains/houses/plains_small_house_1": {
+    "id": "minecraft:village/plains/houses/plains_small_house_1",
+    "size": [
+      7,
+      7,
+      7
+    ],
+    "entry": [
+      1,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          1
+        ],
+        "name": "stripped_oak_log"
+      },
+      {
+        "pos": [
+          5,
+          0,
+          1
+        ],
+        "name": "stripped_oak_log"
+      },
+      {
+        "pos": [
+          5,
+          1,
+          5
+        ],
+        "name": "stripped_oak_log"
+      },
+      {
+        "pos": [
+          2,
+          3,
+          5
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          4,
+          4,
+          1
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          3,
+          2,
+          1
+        ],
+        "name": "glass_pane"
+      },
+      {
+        "pos": [
+          5,
+          4,
+          6
+        ],
+        "name": "oak_stairs"
+      },
+      {
+        "pos": [
+          5,
+          5,
+          1
+        ],
+        "name": "oak_stairs"
+      }
+    ],
+    "materialBudget": 77,
+    "blockCount": 153,
+    "cleanup": [
+      {
+        "pos": [
+          0,
+          0,
+          3
+        ],
+        "name": "oak_stairs",
+        "state": "[facing=east,half=bottom,shape=straight,waterlogged=false]",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          3
+        ],
+        "name": "oak_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/plains/houses/plains_small_house_2": {
+    "id": "minecraft:village/plains/houses/plains_small_house_2",
+    "size": [
+      7,
+      7,
+      7
+    ],
+    "entry": [
+      1,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          1
+        ],
+        "name": "stripped_oak_log"
+      },
+      {
+        "pos": [
+          5,
+          0,
+          1
+        ],
+        "name": "stripped_oak_log"
+      },
+      {
+        "pos": [
+          5,
+          1,
+          4
+        ],
+        "name": "white_terracotta"
+      },
+      {
+        "pos": [
+          2,
+          3,
+          1
+        ],
+        "name": "white_terracotta"
+      },
+      {
+        "pos": [
+          1,
+          4,
+          1
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          5,
+          4,
+          1
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          2,
+          5,
+          2
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          2,
+          6,
+          3
+        ],
+        "name": "oak_planks"
+      }
+    ],
+    "materialBudget": 77,
+    "blockCount": 154,
+    "cleanup": [
+      {
+        "pos": [
+          0,
+          0,
+          3
+        ],
+        "name": "oak_stairs",
+        "state": "[facing=east,half=bottom,shape=straight,waterlogged=false]",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          3
+        ],
+        "name": "oak_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/plains/houses/plains_small_house_3": {
+    "id": "minecraft:village/plains/houses/plains_small_house_3",
+    "size": [
+      7,
+      7,
+      7
+    ],
+    "entry": [
+      1,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          1
+        ],
+        "name": "oak_log"
+      },
+      {
+        "pos": [
+          5,
+          0,
+          1
+        ],
+        "name": "oak_log"
+      },
+      {
+        "pos": [
+          5,
+          1,
+          5
+        ],
+        "name": "oak_log"
+      },
+      {
+        "pos": [
+          2,
+          3,
+          5
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          4,
+          4,
+          1
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          3,
+          2,
+          1
+        ],
+        "name": "glass_pane"
+      },
+      {
+        "pos": [
+          5,
+          4,
+          6
+        ],
+        "name": "oak_stairs"
+      },
+      {
+        "pos": [
+          5,
+          5,
+          1
+        ],
+        "name": "oak_stairs"
+      }
+    ],
+    "materialBudget": 76,
+    "blockCount": 152,
+    "cleanup": [
+      {
+        "pos": [
+          0,
+          0,
+          3
+        ],
+        "name": "oak_stairs",
+        "state": "[facing=east,half=bottom,shape=straight,waterlogged=false]",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          3
+        ],
+        "name": "oak_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/plains/houses/plains_small_house_4": {
+    "id": "minecraft:village/plains/houses/plains_small_house_4",
+    "size": [
+      7,
+      7,
+      7
+    ],
+    "entry": [
+      1,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          1
+        ],
+        "name": "oak_log"
+      },
+      {
+        "pos": [
+          5,
+          0,
+          3
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          1,
+          2,
+          5
+        ],
+        "name": "oak_log"
+      },
+      {
+        "pos": [
+          5,
+          3,
+          2
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          1,
+          5,
+          3
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          2,
+          1,
+          4
+        ],
+        "name": "cobblestone_stairs"
+      },
+      {
+        "pos": [
+          6,
+          4,
+          0
+        ],
+        "name": "oak_stairs"
+      },
+      {
+        "pos": [
+          6,
+          5,
+          5
+        ],
+        "name": "oak_stairs"
+      }
+    ],
+    "materialBudget": 84,
+    "blockCount": 168,
+    "cleanup": [
+      {
+        "pos": [
+          0,
+          0,
+          3
+        ],
+        "name": "oak_stairs",
+        "state": "[facing=east,half=bottom,shape=straight,waterlogged=false]",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          3
+        ],
+        "name": "oak_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/plains/houses/plains_small_house_5": {
+    "id": "minecraft:village/plains/houses/plains_small_house_5",
+    "size": [
+      9,
+      11,
+      9
+    ],
+    "entry": [
+      1,
+      2,
+      4
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          4
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          7,
+          0,
+          7
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          1,
+          2,
+          5
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          3,
+          4,
+          2
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          3,
+          6,
+          4
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          5,
+          8,
+          6
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          1,
+          5,
+          5
+        ],
+        "name": "oak_fence"
+      },
+      {
+        "pos": [
+          8,
+          8,
+          7
+        ],
+        "name": "oak_stairs"
+      }
+    ],
+    "materialBudget": 176,
+    "blockCount": 351,
+    "cleanup": [
+      {
+        "pos": [
+          0,
+          0,
+          1
+        ],
+        "name": "dirt",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          1,
+          0,
+          7
+        ],
+        "name": "dirt",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          8,
+          0,
+          3
+        ],
+        "name": "dirt",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          4
+        ],
+        "name": "cobblestone_stairs",
+        "state": "[facing=east,half=bottom,shape=straight,waterlogged=false]",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          1,
+          2
+        ],
+        "name": "oak_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          1,
+          5
+        ],
+        "name": "oak_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/plains/houses/plains_small_house_6": {
+    "id": "minecraft:village/plains/houses/plains_small_house_6",
+    "size": [
+      7,
+      7,
+      7
+    ],
+    "entry": [
+      2,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          2
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          5,
+          0,
+          3
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          2,
+          2,
+          2
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          4,
+          3,
+          1
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          5,
+          4,
+          3
+        ],
+        "name": "oak_log"
+      },
+      {
+        "pos": [
+          1,
+          0,
+          3
+        ],
+        "name": "cobblestone_stairs"
+      },
+      {
+        "pos": [
+          5,
+          4,
+          6
+        ],
+        "name": "oak_stairs"
+      },
+      {
+        "pos": [
+          6,
+          5,
+          2
+        ],
+        "name": "oak_stairs"
+      }
+    ],
+    "materialBudget": 74,
+    "blockCount": 147,
+    "cleanup": [
+      {
+        "pos": [
+          0,
+          0,
+          3
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          4
+        ],
+        "name": "cobblestone",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/plains/houses/plains_small_house_7": {
+    "id": "minecraft:village/plains/houses/plains_small_house_7",
+    "size": [
+      7,
+      7,
+      8
+    ],
+    "entry": [
+      1,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          1
+        ],
+        "name": "oak_log"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          6
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          5,
+          1,
+          6
+        ],
+        "name": "oak_log"
+      },
+      {
+        "pos": [
+          3,
+          3,
+          6
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          0,
+          0,
+          3
+        ],
+        "name": "cobblestone_stairs"
+      },
+      {
+        "pos": [
+          4,
+          3,
+          7
+        ],
+        "name": "oak_stairs"
+      },
+      {
+        "pos": [
+          6,
+          4,
+          2
+        ],
+        "name": "oak_stairs"
+      },
+      {
+        "pos": [
+          0,
+          6,
+          4
+        ],
+        "name": "oak_stairs"
+      }
+    ],
+    "materialBudget": 88,
+    "blockCount": 176,
+    "cleanup": [
+      {
+        "pos": [
+          0,
+          0,
+          4
+        ],
+        "name": "cobblestone_stairs",
+        "state": "[facing=east,half=bottom,shape=straight,waterlogged=false]",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          4
+        ],
+        "name": "oak_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/plains/houses/plains_small_house_8": {
+    "id": "minecraft:village/plains/houses/plains_small_house_8",
+    "size": [
+      8,
+      9,
+      9
+    ],
+    "entry": [
+      1,
+      3,
+      4
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          3
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          5,
+          0,
+          2
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          4
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          5,
+          2,
+          5
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          1,
+          5,
+          4
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          1,
+          7,
+          4
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          0,
+          2,
+          3
+        ],
+        "name": "cobblestone_stairs"
+      },
+      {
+        "pos": [
+          6,
+          6,
+          7
+        ],
+        "name": "oak_stairs"
+      }
+    ],
+    "materialBudget": 126,
+    "blockCount": 252,
+    "cleanup": [
+      {
+        "pos": [
+          0,
+          2,
+          4
+        ],
+        "name": "cobblestone_stairs",
+        "state": "[facing=east,half=bottom,shape=straight,waterlogged=false]",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          2,
+          4
+        ],
+        "name": "oak_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/savanna/houses/savanna_small_house_1": {
+    "id": "minecraft:village/savanna/houses/savanna_small_house_1",
+    "size": [
+      7,
+      7,
+      7
+    ],
+    "entry": [
+      3,
+      1,
+      5
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          2
+        ],
+        "name": "acacia_wood"
+      },
+      {
+        "pos": [
+          6,
+          0,
+          3
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          5,
+          2,
+          4
+        ],
+        "name": "yellow_terracotta"
+      },
+      {
+        "pos": [
+          4,
+          4,
+          1
+        ],
+        "name": "acacia_planks"
+      },
+      {
+        "pos": [
+          1,
+          1,
+          5
+        ],
+        "name": "short_grass"
+      },
+      {
+        "pos": [
+          0,
+          4,
+          5
+        ],
+        "name": "acacia_stairs"
+      },
+      {
+        "pos": [
+          2,
+          5,
+          5
+        ],
+        "name": "acacia_stairs"
+      }
+    ],
+    "materialBudget": 89,
+    "blockCount": 177,
+    "cleanup": [
+      {
+        "pos": [
+          2,
+          0,
+          6
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          1,
+          6
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/savanna/houses/savanna_small_house_2": {
+    "id": "minecraft:village/savanna/houses/savanna_small_house_2",
+    "size": [
+      7,
+      7,
+      7
+    ],
+    "entry": [
+      3,
+      1,
+      5
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          1
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          6,
+          0,
+          2
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          4,
+          2,
+          5
+        ],
+        "name": "red_terracotta"
+      },
+      {
+        "pos": [
+          2,
+          4,
+          5
+        ],
+        "name": "acacia_planks"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          0
+        ],
+        "name": "short_grass"
+      },
+      {
+        "pos": [
+          0,
+          4,
+          4
+        ],
+        "name": "acacia_stairs"
+      },
+      {
+        "pos": [
+          1,
+          5,
+          5
+        ],
+        "name": "acacia_stairs"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          2
+        ],
+        "name": "red_bed"
+      }
+    ],
+    "materialBudget": 87,
+    "blockCount": 174,
+    "cleanup": [
+      {
+        "pos": [
+          2,
+          0,
+          6
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          6
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/savanna/houses/savanna_small_house_3": {
+    "id": "minecraft:village/savanna/houses/savanna_small_house_3",
+    "size": [
+      7,
+      7,
+      7
+    ],
+    "entry": [
+      3,
+      1,
+      5
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          0
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          6,
+          0,
+          1
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          2,
+          2,
+          5
+        ],
+        "name": "orange_terracotta"
+      },
+      {
+        "pos": [
+          1,
+          4,
+          5
+        ],
+        "name": "acacia_planks"
+      },
+      {
+        "pos": [
+          3,
+          6,
+          3
+        ],
+        "name": "acacia_planks"
+      },
+      {
+        "pos": [
+          0,
+          4,
+          3
+        ],
+        "name": "acacia_stairs"
+      },
+      {
+        "pos": [
+          1,
+          5,
+          4
+        ],
+        "name": "acacia_stairs"
+      },
+      {
+        "pos": [
+          2,
+          1,
+          2
+        ],
+        "name": "red_bed"
+      }
+    ],
+    "materialBudget": 88,
+    "blockCount": 175,
+    "cleanup": [
+      {
+        "pos": [
+          5,
+          0,
+          6
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          1,
+          6
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/savanna/houses/savanna_small_house_4": {
+    "id": "minecraft:village/savanna/houses/savanna_small_house_4",
+    "size": [
+      10,
+      8,
+      7
+    ],
+    "entry": [
+      4,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          2
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          8,
+          0,
+          6
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          5,
+          3,
+          5
+        ],
+        "name": "acacia_log"
+      },
+      {
+        "pos": [
+          8,
+          5,
+          2
+        ],
+        "name": "acacia_planks"
+      },
+      {
+        "pos": [
+          7,
+          1,
+          0
+        ],
+        "name": "short_grass"
+      },
+      {
+        "pos": [
+          3,
+          5,
+          1
+        ],
+        "name": "acacia_stairs"
+      },
+      {
+        "pos": [
+          7,
+          6,
+          5
+        ],
+        "name": "acacia_stairs"
+      }
+    ],
+    "materialBudget": 122,
+    "blockCount": 243,
+    "cleanup": [
+      {
+        "pos": [
+          5,
+          0,
+          2
+        ],
+        "name": "acacia_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          5,
+          1,
+          6
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/savanna/houses/savanna_small_house_5": {
+    "id": "minecraft:village/savanna/houses/savanna_small_house_5",
+    "size": [
+      7,
+      10,
+      7
+    ],
+    "entry": [
+      5,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          2
+        ],
+        "name": "acacia_planks"
+      },
+      {
+        "pos": [
+          1,
+          2,
+          4
+        ],
+        "name": "acacia_log"
+      },
+      {
+        "pos": [
+          5,
+          4,
+          4
+        ],
+        "name": "yellow_terracotta"
+      },
+      {
+        "pos": [
+          3,
+          9,
+          3
+        ],
+        "name": "acacia_planks"
+      },
+      {
+        "pos": [
+          5,
+          2,
+          6
+        ],
+        "name": "acacia_fence"
+      },
+      {
+        "pos": [
+          1,
+          5,
+          6
+        ],
+        "name": "acacia_slab"
+      },
+      {
+        "pos": [
+          1,
+          8,
+          2
+        ],
+        "name": "acacia_stairs"
+      }
+    ],
+    "materialBudget": 120,
+    "blockCount": 240,
+    "cleanup": [
+      {
+        "pos": [
+          4,
+          0,
+          3
+        ],
+        "name": "acacia_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          6,
+          1,
+          3
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/savanna/houses/savanna_small_house_6": {
+    "id": "minecraft:village/savanna/houses/savanna_small_house_6",
+    "size": [
+      7,
+      7,
+      7
+    ],
+    "entry": [
+      1,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          4
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          4
+        ],
+        "name": "acacia_planks"
+      },
+      {
+        "pos": [
+          1,
+          2,
+          2
+        ],
+        "name": "acacia_log"
+      },
+      {
+        "pos": [
+          5,
+          3,
+          2
+        ],
+        "name": "acacia_log"
+      },
+      {
+        "pos": [
+          5,
+          4,
+          4
+        ],
+        "name": "acacia_planks"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          2
+        ],
+        "name": "acacia_stairs"
+      },
+      {
+        "pos": [
+          4,
+          4,
+          6
+        ],
+        "name": "acacia_stairs"
+      },
+      {
+        "pos": [
+          4,
+          5,
+          1
+        ],
+        "name": "acacia_stairs"
+      }
+    ],
+    "materialBudget": 70,
+    "blockCount": 140,
+    "cleanup": [
+      {
+        "pos": [
+          3,
+          0,
+          3
+        ],
+        "name": "acacia_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          6,
+          0,
+          3
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          3
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/savanna/houses/savanna_small_house_7": {
+    "id": "minecraft:village/savanna/houses/savanna_small_house_7",
+    "size": [
+      7,
+      7,
+      7
+    ],
+    "entry": [
+      3,
+      1,
+      5
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          1
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          6,
+          0,
+          4
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          5,
+          2,
+          4
+        ],
+        "name": "acacia_log"
+      },
+      {
+        "pos": [
+          4,
+          4,
+          1
+        ],
+        "name": "acacia_planks"
+      },
+      {
+        "pos": [
+          1,
+          1,
+          1
+        ],
+        "name": "short_grass"
+      },
+      {
+        "pos": [
+          2,
+          4,
+          0
+        ],
+        "name": "acacia_stairs"
+      },
+      {
+        "pos": [
+          4,
+          5,
+          1
+        ],
+        "name": "acacia_stairs"
+      }
+    ],
+    "materialBudget": 88,
+    "blockCount": 176,
+    "cleanup": [
+      {
+        "pos": [
+          5,
+          0,
+          6
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          2,
+          1,
+          6
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/savanna/houses/savanna_small_house_8": {
+    "id": "minecraft:village/savanna/houses/savanna_small_house_8",
+    "size": [
+      6,
+      7,
+      7
+    ],
+    "entry": [
+      1,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          2
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          3
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          2,
+          2,
+          1
+        ],
+        "name": "acacia_wood"
+      },
+      {
+        "pos": [
+          4,
+          3,
+          2
+        ],
+        "name": "yellow_terracotta"
+      },
+      {
+        "pos": [
+          4,
+          4,
+          2
+        ],
+        "name": "acacia_planks"
+      },
+      {
+        "pos": [
+          3,
+          1,
+          4
+        ],
+        "name": "acacia_stairs"
+      },
+      {
+        "pos": [
+          3,
+          4,
+          6
+        ],
+        "name": "acacia_stairs"
+      },
+      {
+        "pos": [
+          2,
+          5,
+          1
+        ],
+        "name": "acacia_stairs"
+      }
+    ],
+    "materialBudget": 54,
+    "blockCount": 107,
+    "cleanup": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          3
+        ],
+        "name": "acacia_log",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          3
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/snowy/houses/snowy_small_house_1": {
+    "id": "minecraft:village/snowy/houses/snowy_small_house_1",
+    "size": [
+      7,
+      5,
+      6
+    ],
+    "entry": [
+      3,
+      1,
+      4
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          2,
+          0,
+          2
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          5
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          1,
+          1,
+          2
+        ],
+        "name": "packed_ice"
+      },
+      {
+        "pos": [
+          2,
+          2,
+          0
+        ],
+        "name": "packed_ice"
+      },
+      {
+        "pos": [
+          4,
+          3,
+          0
+        ],
+        "name": "packed_ice"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          0
+        ],
+        "name": "snow"
+      },
+      {
+        "pos": [
+          6,
+          1,
+          0
+        ],
+        "name": "snow"
+      }
+    ],
+    "materialBudget": 57,
+    "blockCount": 113,
+    "cleanup": [
+      {
+        "pos": [
+          3,
+          0,
+          2
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          1,
+          5
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/snowy/houses/snowy_small_house_2": {
+    "id": "minecraft:village/snowy/houses/snowy_small_house_2",
+    "size": [
+      7,
+      8,
+      7
+    ],
+    "entry": [
+      3,
+      1,
+      1
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          1
+        ],
+        "name": "stripped_spruce_wood"
+      },
+      {
+        "pos": [
+          1,
+          1,
+          3
+        ],
+        "name": "stripped_spruce_wood"
+      },
+      {
+        "pos": [
+          2,
+          2,
+          5
+        ],
+        "name": "stripped_spruce_wood"
+      },
+      {
+        "pos": [
+          5,
+          3,
+          2
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          2,
+          5,
+          5
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          6
+        ],
+        "name": "snow"
+      },
+      {
+        "pos": [
+          0,
+          3,
+          4
+        ],
+        "name": "spruce_slab"
+      },
+      {
+        "pos": [
+          5,
+          5,
+          1
+        ],
+        "name": "snow"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          4
+        ],
+        "name": "furnace"
+      }
+    ],
+    "materialBudget": 119,
+    "blockCount": 238,
+    "cleanup": [
+      {
+        "pos": [
+          3,
+          0,
+          0
+        ],
+        "name": "spruce_stairs",
+        "state": "[facing=south]",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          3
+        ],
+        "name": "spruce_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/snowy/houses/snowy_small_house_3": {
+    "id": "minecraft:village/snowy/houses/snowy_small_house_3",
+    "size": [
+      7,
+      6,
+      7
+    ],
+    "entry": [
+      2,
+      1,
+      4
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          3
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          1,
+          1,
+          2
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          2,
+          2,
+          1
+        ],
+        "name": "stripped_spruce_wood"
+      },
+      {
+        "pos": [
+          4,
+          3,
+          2
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          5,
+          1,
+          6
+        ],
+        "name": "snow"
+      },
+      {
+        "pos": [
+          5,
+          2,
+          5
+        ],
+        "name": "spruce_stairs"
+      },
+      {
+        "pos": [
+          2,
+          5,
+          1
+        ],
+        "name": "spruce_slab"
+      }
+    ],
+    "materialBudget": 76,
+    "blockCount": 152,
+    "cleanup": [
+      {
+        "pos": [
+          3,
+          0,
+          2
+        ],
+        "name": "spruce_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          6
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/snowy/houses/snowy_small_house_4": {
+    "id": "minecraft:village/snowy/houses/snowy_small_house_4",
+    "size": [
+      8,
+      5,
+      7
+    ],
+    "entry": [
+      1,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          0
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          2,
+          0,
+          5
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          5,
+          0,
+          4
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          1,
+          1,
+          4
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          3,
+          2,
+          5
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          4,
+          3,
+          4
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          0
+        ],
+        "name": "snow"
+      },
+      {
+        "pos": [
+          6,
+          2,
+          3
+        ],
+        "name": "lantern"
+      }
+    ],
+    "materialBudget": 77,
+    "blockCount": 153,
+    "cleanup": [
+      {
+        "pos": [
+          4,
+          0,
+          3
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          3
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/snowy/houses/snowy_small_house_5": {
+    "id": "minecraft:village/snowy/houses/snowy_small_house_5",
+    "size": [
+      7,
+      5,
+      5
+    ],
+    "entry": [
+      0,
+      1,
+      2
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          1
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          2,
+          0,
+          4
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          5,
+          0,
+          0
+        ],
+        "name": "grass_block"
+      },
+      {
+        "pos": [
+          1,
+          1,
+          0
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          0,
+          2,
+          1
+        ],
+        "name": "blue_ice"
+      },
+      {
+        "pos": [
+          5,
+          2,
+          3
+        ],
+        "name": "blue_ice"
+      },
+      {
+        "pos": [
+          5,
+          3,
+          2
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          5,
+          1,
+          4
+        ],
+        "name": "snow"
+      }
+    ],
+    "materialBudget": 45,
+    "blockCount": 90,
+    "cleanup": [
+      {
+        "pos": [
+          2,
+          0,
+          2
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          3
+        ],
+        "name": "blue_ice",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/snowy/houses/snowy_small_house_6": {
+    "id": "minecraft:village/snowy/houses/snowy_small_house_6",
+    "size": [
+      7,
+      9,
+      7
+    ],
+    "entry": [
+      1,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          1
+        ],
+        "name": "stripped_spruce_log"
+      },
+      {
+        "pos": [
+          5,
+          0,
+          5
+        ],
+        "name": "stripped_spruce_log"
+      },
+      {
+        "pos": [
+          5,
+          1,
+          2
+        ],
+        "name": "stripped_spruce_log"
+      },
+      {
+        "pos": [
+          4,
+          2,
+          0
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          4,
+          3,
+          1
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          5,
+          4,
+          2
+        ],
+        "name": "stripped_spruce_log"
+      },
+      {
+        "pos": [
+          1,
+          6,
+          3
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          6,
+          0,
+          1
+        ],
+        "name": "snow"
+      }
+    ],
+    "materialBudget": 92,
+    "blockCount": 184,
+    "cleanup": [
+      {
+        "pos": [
+          0,
+          0,
+          3
+        ],
+        "name": "spruce_stairs",
+        "state": "[facing=east]",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          3
+        ],
+        "name": "spruce_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/snowy/houses/snowy_small_house_7": {
+    "id": "minecraft:village/snowy/houses/snowy_small_house_7",
+    "size": [
+      6,
+      7,
+      7
+    ],
+    "entry": [
+      1,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          1
+        ],
+        "name": "stripped_spruce_log"
+      },
+      {
+        "pos": [
+          1,
+          1,
+          1
+        ],
+        "name": "stripped_spruce_log"
+      },
+      {
+        "pos": [
+          1,
+          2,
+          5
+        ],
+        "name": "stripped_spruce_log"
+      },
+      {
+        "pos": [
+          0,
+          3,
+          5
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          1,
+          4,
+          2
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          0,
+          0,
+          2
+        ],
+        "name": "spruce_stairs"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          6
+        ],
+        "name": "spruce_slab"
+      },
+      {
+        "pos": [
+          5,
+          3,
+          6
+        ],
+        "name": "spruce_slab"
+      },
+      {
+        "pos": [
+          2,
+          6,
+          3
+        ],
+        "name": "spruce_slab"
+      }
+    ],
+    "materialBudget": 80,
+    "blockCount": 159,
+    "cleanup": [
+      {
+        "pos": [
+          0,
+          0,
+          3
+        ],
+        "name": "spruce_stairs",
+        "state": "[facing=east]",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          2,
+          0,
+          3
+        ],
+        "name": "stripped_spruce_log",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/snowy/houses/snowy_small_house_8": {
+    "id": "minecraft:village/snowy/houses/snowy_small_house_8",
+    "size": [
+      6,
+      5,
+      5
+    ],
+    "entry": [
+      0,
+      1,
+      2
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          0,
+          1
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          2,
+          0,
+          1
+        ],
+        "name": "light_gray_wool"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          2
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          3,
+          1,
+          0
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          1,
+          2,
+          4
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          0,
+          3,
+          1
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          3,
+          3,
+          1
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          2
+        ],
+        "name": "spruce_door"
+      }
+    ],
+    "materialBudget": 36,
+    "blockCount": 72,
+    "cleanup": [
+      {
+        "pos": [
+          2,
+          0,
+          2
+        ],
+        "name": "light_gray_wool",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          1
+        ],
+        "name": "snow_block",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/taiga/houses/taiga_small_house_1": {
+    "id": "minecraft:village/taiga/houses/taiga_small_house_1",
+    "size": [
+      7,
+      8,
+      9
+    ],
+    "entry": [
+      3,
+      2,
+      2
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          1
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          5,
+          0,
+          3
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          5,
+          1,
+          2
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          1,
+          3,
+          3
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          1,
+          4,
+          5
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          1,
+          5,
+          2
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          5,
+          5,
+          8
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          3,
+          7,
+          6
+        ],
+        "name": "spruce_log"
+      }
+    ],
+    "materialBudget": 109,
+    "blockCount": 217,
+    "cleanup": [
+      {
+        "pos": [
+          2,
+          1,
+          3
+        ],
+        "name": "spruce_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          1,
+          0
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/taiga/houses/taiga_small_house_2": {
+    "id": "minecraft:village/taiga/houses/taiga_small_house_2",
+    "size": [
+      7,
+      7,
+      7
+    ],
+    "entry": [
+      3,
+      1,
+      1
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          1
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          5
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          5,
+          1,
+          2
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          0,
+          3,
+          2
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          5,
+          3,
+          3
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          2,
+          4,
+          5
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          2,
+          5,
+          6
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          2,
+          0,
+          0
+        ],
+        "name": "cobblestone_wall"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          4
+        ],
+        "name": "purple_bed"
+      }
+    ],
+    "materialBudget": 75,
+    "blockCount": 150,
+    "cleanup": [
+      {
+        "pos": [
+          3,
+          0,
+          0
+        ],
+        "name": "cobblestone_stairs",
+        "state": "[facing=south]",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          3
+        ],
+        "name": "spruce_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/taiga/houses/taiga_small_house_3": {
+    "id": "minecraft:village/taiga/houses/taiga_small_house_3",
+    "size": [
+      7,
+      7,
+      7
+    ],
+    "entry": [
+      3,
+      1,
+      1
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          1
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          5,
+          0,
+          1
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          5,
+          1,
+          4
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          0,
+          3,
+          5
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          6,
+          3,
+          1
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          5,
+          4,
+          0
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          4,
+          5,
+          3
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          0,
+          2,
+          2
+        ],
+        "name": "spruce_trapdoor"
+      }
+    ],
+    "materialBudget": 76,
+    "blockCount": 152,
+    "cleanup": [
+      {
+        "pos": [
+          3,
+          0,
+          0
+        ],
+        "name": "cobblestone_stairs",
+        "state": "[facing=south]",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          3
+        ],
+        "name": "cobblestone",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/taiga/houses/taiga_small_house_4": {
+    "id": "minecraft:village/taiga/houses/taiga_small_house_4",
+    "size": [
+      7,
+      6,
+      8
+    ],
+    "entry": [
+      3,
+      1,
+      4
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          1
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          5
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          6
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          5,
+          2,
+          4
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          3,
+          3,
+          5
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          1,
+          4,
+          1
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          5,
+          4,
+          2
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          5,
+          5,
+          2
+        ],
+        "name": "spruce_log"
+      }
+    ],
+    "materialBudget": 78,
+    "blockCount": 155,
+    "cleanup": [
+      {
+        "pos": [
+          0,
+          0,
+          6
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          2,
+          0,
+          3
+        ],
+        "name": "cobblestone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          1,
+          7
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/taiga/houses/taiga_small_house_5": {
+    "id": "minecraft:village/taiga/houses/taiga_small_house_5",
+    "size": [
+      9,
+      7,
+      7
+    ],
+    "entry": [
+      2,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          0,
+          1
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          6,
+          0,
+          2
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          6,
+          1,
+          5
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          1,
+          3,
+          1
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          6,
+          3,
+          0
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          3,
+          4,
+          1
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          3,
+          5,
+          2
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          2,
+          1,
+          2
+        ],
+        "name": "cobblestone"
+      }
+    ],
+    "materialBudget": 89,
+    "blockCount": 178,
+    "cleanup": [
+      {
+        "pos": [
+          1,
+          0,
+          3
+        ],
+        "name": "cobblestone_stairs",
+        "state": "[facing=east]",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          3
+        ],
+        "name": "spruce_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/desert/houses/desert_medium_house_1": {
+    "id": "minecraft:village/desert/houses/desert_medium_house_1",
+    "size": [
+      6,
+      6,
+      7
+    ],
+    "entry": [
+      1,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          1,
+          0
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          6
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          2,
+          2,
+          0
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          1,
+          3,
+          4
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          1,
+          4,
+          1
+        ],
+        "name": "cut_sandstone"
+      },
+      {
+        "pos": [
+          2,
+          4,
+          6
+        ],
+        "name": "cut_sandstone"
+      },
+      {
+        "pos": [
+          4,
+          4,
+          4
+        ],
+        "name": "cut_sandstone"
+      },
+      {
+        "pos": [
+          3,
+          2,
+          0
+        ],
+        "name": "sandstone_slab"
+      }
+    ],
+    "materialBudget": 78,
+    "blockCount": 156,
+    "cleanup": [
+      {
+        "pos": [
+          3,
+          0,
+          2
+        ],
+        "name": "smooth_sandstone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          4
+        ],
+        "name": "smooth_sandstone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          3
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/desert/houses/desert_medium_house_2": {
+    "id": "minecraft:village/desert/houses/desert_medium_house_2",
+    "size": [
+      11,
+      9,
+      7
+    ],
+    "entry": [
+      4,
+      1,
+      1
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          1,
+          1
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          7,
+          1,
+          3
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          5,
+          2,
+          3
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          1,
+          3,
+          5
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          8,
+          3,
+          1
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          8,
+          4,
+          4
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          8,
+          5,
+          4
+        ],
+        "name": "smooth_sandstone"
+      },
+      {
+        "pos": [
+          6,
+          2,
+          0
+        ],
+        "name": "smooth_sandstone_stairs"
+      }
+    ],
+    "materialBudget": 163,
+    "blockCount": 326,
+    "cleanup": [
+      {
+        "pos": [
+          4,
+          0,
+          2
+        ],
+        "name": "smooth_sandstone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          0
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          7,
+          2,
+          2
+        ],
+        "name": "smooth_sandstone",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/plains/houses/plains_big_house_1": {
+    "id": "minecraft:village/plains/houses/plains_big_house_1",
+    "size": [
+      7,
+      11,
+      11
+    ],
+    "entry": [
+      1,
+      1,
+      5
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          1,
+          1
+        ],
+        "name": "oak_log"
+      },
+      {
+        "pos": [
+          4,
+          2,
+          4
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          5,
+          3,
+          9
+        ],
+        "name": "oak_log"
+      },
+      {
+        "pos": [
+          5,
+          4,
+          4
+        ],
+        "name": "oak_log"
+      },
+      {
+        "pos": [
+          1,
+          6,
+          6
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          2,
+          7,
+          1
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          1,
+          8,
+          8
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          4,
+          9,
+          1
+        ],
+        "name": "oak_planks"
+      }
+    ],
+    "materialBudget": 167,
+    "blockCount": 335,
+    "cleanup": [
+      {
+        "pos": [
+          3,
+          0,
+          3
+        ],
+        "name": "cobblestone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          8
+        ],
+        "name": "cobblestone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          5
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          4,
+          2
+        ],
+        "name": "oak_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          4,
+          8
+        ],
+        "name": "oak_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/plains/houses/plains_medium_house_1": {
+    "id": "minecraft:village/plains/houses/plains_medium_house_1",
+    "size": [
+      13,
+      8,
+      11
+    ],
+    "entry": [
+      1,
+      2,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          1,
+          1
+        ],
+        "name": "stripped_oak_log"
+      },
+      {
+        "pos": [
+          7,
+          1,
+          3
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          6,
+          2,
+          2
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          1,
+          4,
+          8
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          5,
+          5,
+          0
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          6,
+          6,
+          7
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          7,
+          4,
+          0
+        ],
+        "name": "oak_stairs"
+      },
+      {
+        "pos": [
+          2,
+          6,
+          10
+        ],
+        "name": "oak_stairs"
+      }
+    ],
+    "materialBudget": 263,
+    "blockCount": 527,
+    "cleanup": [
+      {
+        "pos": [
+          10,
+          0,
+          0
+        ],
+        "name": "dirt",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          4
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          7
+        ],
+        "name": "oak_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          6,
+          1,
+          6
+        ],
+        "name": "oak_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/plains/houses/plains_medium_house_2": {
+    "id": "minecraft:village/plains/houses/plains_medium_house_2",
+    "size": [
+      7,
+      6,
+      13
+    ],
+    "entry": [
+      1,
+      1,
+      6
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          1,
+          1
+        ],
+        "name": "oak_log"
+      },
+      {
+        "pos": [
+          5,
+          1,
+          10
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          1,
+          3,
+          3
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          5,
+          3,
+          11
+        ],
+        "name": "oak_log"
+      },
+      {
+        "pos": [
+          2,
+          5,
+          9
+        ],
+        "name": "oak_planks"
+      },
+      {
+        "pos": [
+          2,
+          3,
+          12
+        ],
+        "name": "oak_stairs"
+      },
+      {
+        "pos": [
+          2,
+          4,
+          5
+        ],
+        "name": "oak_stairs"
+      },
+      {
+        "pos": [
+          0,
+          5,
+          8
+        ],
+        "name": "oak_stairs"
+      }
+    ],
+    "materialBudget": 133,
+    "blockCount": 267,
+    "cleanup": [
+      {
+        "pos": [
+          0,
+          0,
+          6
+        ],
+        "name": "cobblestone_stairs",
+        "state": "[facing=east,half=bottom,shape=straight,waterlogged=false]",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          4
+        ],
+        "name": "cobblestone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          8
+        ],
+        "name": "cobblestone",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/savanna/houses/savanna_medium_house_1": {
+    "id": "minecraft:village/savanna/houses/savanna_medium_house_1",
+    "size": [
+      8,
+      7,
+      15
+    ],
+    "entry": [
+      1,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          1,
+          2
+        ],
+        "name": "acacia_log"
+      },
+      {
+        "pos": [
+          2,
+          2,
+          5
+        ],
+        "name": "acacia_log"
+      },
+      {
+        "pos": [
+          4,
+          3,
+          9
+        ],
+        "name": "acacia_log"
+      },
+      {
+        "pos": [
+          4,
+          4,
+          5
+        ],
+        "name": "acacia_planks"
+      },
+      {
+        "pos": [
+          4,
+          5,
+          4
+        ],
+        "name": "acacia_planks"
+      },
+      {
+        "pos": [
+          0,
+          4,
+          9
+        ],
+        "name": "acacia_stairs"
+      },
+      {
+        "pos": [
+          6,
+          4,
+          3
+        ],
+        "name": "acacia_stairs"
+      },
+      {
+        "pos": [
+          4,
+          5,
+          5
+        ],
+        "name": "acacia_stairs"
+      }
+    ],
+    "materialBudget": 163,
+    "blockCount": 327,
+    "cleanup": [
+      {
+        "pos": [
+          0,
+          0,
+          8
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          3
+        ],
+        "name": "acacia_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          11
+        ],
+        "name": "acacia_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          7
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/savanna/houses/savanna_medium_house_2": {
+    "id": "minecraft:village/savanna/houses/savanna_medium_house_2",
+    "size": [
+      10,
+      8,
+      11
+    ],
+    "entry": [
+      1,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          1,
+          2
+        ],
+        "name": "acacia_wood"
+      },
+      {
+        "pos": [
+          8,
+          1,
+          7
+        ],
+        "name": "acacia_wood"
+      },
+      {
+        "pos": [
+          2,
+          3,
+          5
+        ],
+        "name": "acacia_wood"
+      },
+      {
+        "pos": [
+          1,
+          4,
+          3
+        ],
+        "name": "acacia_planks"
+      },
+      {
+        "pos": [
+          7,
+          4,
+          9
+        ],
+        "name": "acacia_planks"
+      },
+      {
+        "pos": [
+          2,
+          4,
+          0
+        ],
+        "name": "acacia_stairs"
+      },
+      {
+        "pos": [
+          9,
+          4,
+          7
+        ],
+        "name": "acacia_stairs"
+      },
+      {
+        "pos": [
+          4,
+          5,
+          5
+        ],
+        "name": "acacia_stairs"
+      }
+    ],
+    "materialBudget": 128,
+    "blockCount": 256,
+    "cleanup": [
+      {
+        "pos": [
+          3,
+          0,
+          3
+        ],
+        "name": "acacia_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          7,
+          0,
+          2
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          7,
+          0,
+          8
+        ],
+        "name": "acacia_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          5
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/snowy/houses/snowy_medium_house_1": {
+    "id": "minecraft:village/snowy/houses/snowy_medium_house_1",
+    "size": [
+      7,
+      6,
+      8
+    ],
+    "entry": [
+      6,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          1,
+          2
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          3,
+          1,
+          6
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          0,
+          2,
+          2
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          3,
+          2,
+          6
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          6,
+          2,
+          4
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          3,
+          3,
+          1
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          6,
+          3,
+          4
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          3,
+          4,
+          3
+        ],
+        "name": "snow_block"
+      }
+    ],
+    "materialBudget": 87,
+    "blockCount": 174,
+    "cleanup": [
+      {
+        "pos": [
+          3,
+          0,
+          2
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          0,
+          4
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          6,
+          1,
+          4
+        ],
+        "name": "snow_block",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/snowy/houses/snowy_medium_house_2": {
+    "id": "minecraft:village/snowy/houses/snowy_medium_house_2",
+    "size": [
+      14,
+      9,
+      7
+    ],
+    "entry": [
+      5,
+      1,
+      1
+    ],
+    "anchors": [
+      {
+        "pos": [
+          2,
+          1,
+          2
+        ],
+        "name": "snow_block"
+      },
+      {
+        "pos": [
+          6,
+          2,
+          1
+        ],
+        "name": "stripped_spruce_wood"
+      },
+      {
+        "pos": [
+          9,
+          3,
+          0
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          6,
+          4,
+          4
+        ],
+        "name": "stripped_spruce_wood"
+      },
+      {
+        "pos": [
+          3,
+          5,
+          3
+        ],
+        "name": "stripped_spruce_wood"
+      },
+      {
+        "pos": [
+          8,
+          6,
+          1
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          11,
+          7,
+          2
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          10,
+          3,
+          5
+        ],
+        "name": "spruce_slab"
+      }
+    ],
+    "materialBudget": 204,
+    "blockCount": 409,
+    "cleanup": [
+      {
+        "pos": [
+          5,
+          0,
+          3
+        ],
+        "name": "spruce_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          7,
+          0,
+          0
+        ],
+        "name": "snow_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          9,
+          0,
+          3
+        ],
+        "name": "spruce_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/snowy/houses/snowy_medium_house_3": {
+    "id": "minecraft:village/snowy/houses/snowy_medium_house_3",
+    "size": [
+      5,
+      5,
+      7
+    ],
+    "entry": [
+      0,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          0,
+          1,
+          1
+        ],
+        "name": "blue_ice"
+      },
+      {
+        "pos": [
+          2,
+          1,
+          6
+        ],
+        "name": "packed_ice"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          4
+        ],
+        "name": "packed_ice"
+      },
+      {
+        "pos": [
+          1,
+          2,
+          0
+        ],
+        "name": "blue_ice"
+      },
+      {
+        "pos": [
+          4,
+          2,
+          1
+        ],
+        "name": "blue_ice"
+      },
+      {
+        "pos": [
+          0,
+          3,
+          3
+        ],
+        "name": "packed_ice"
+      },
+      {
+        "pos": [
+          2,
+          3,
+          0
+        ],
+        "name": "packed_ice"
+      },
+      {
+        "pos": [
+          3,
+          3,
+          1
+        ],
+        "name": "blue_ice"
+      }
+    ],
+    "materialBudget": 50,
+    "blockCount": 100,
+    "cleanup": [
+      {
+        "pos": [
+          2,
+          0,
+          2
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          2,
+          0,
+          4
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          2
+        ],
+        "name": "packed_ice",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/taiga/houses/taiga_medium_house_1": {
+    "id": "minecraft:village/taiga/houses/taiga_medium_house_1",
+    "size": [
+      8,
+      11,
+      7
+    ],
+    "entry": [
+      3,
+      1,
+      4
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          1,
+          4
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          2,
+          2,
+          2
+        ],
+        "name": "dirt"
+      },
+      {
+        "pos": [
+          4,
+          4,
+          3
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          5,
+          6,
+          2
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          5,
+          7,
+          2
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          3,
+          8,
+          5
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          4,
+          9,
+          2
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          7,
+          2,
+          2
+        ],
+        "name": "dirt_path"
+      }
+    ],
+    "materialBudget": 141,
+    "blockCount": 282,
+    "cleanup": [
+      {
+        "pos": [
+          5,
+          3,
+          6
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          2,
+          5,
+          2
+        ],
+        "name": "spruce_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          5,
+          3
+        ],
+        "name": "spruce_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/taiga/houses/taiga_medium_house_2": {
+    "id": "minecraft:village/taiga/houses/taiga_medium_house_2",
+    "size": [
+      7,
+      11,
+      8
+    ],
+    "entry": [
+      3,
+      1,
+      1
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          1,
+          3
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          1,
+          2,
+          6
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          3,
+          3,
+          1
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          3,
+          4,
+          4
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          1,
+          6,
+          3
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          0,
+          8,
+          7
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          5,
+          8,
+          7
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          1,
+          10,
+          5
+        ],
+        "name": "spruce_log"
+      }
+    ],
+    "materialBudget": 126,
+    "blockCount": 253,
+    "cleanup": [
+      {
+        "pos": [
+          2,
+          0,
+          4
+        ],
+        "name": "cobblestone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          4,
+          1,
+          0
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          3,
+          4,
+          5
+        ],
+        "name": "spruce_planks",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/taiga/houses/taiga_medium_house_3": {
+    "id": "minecraft:village/taiga/houses/taiga_medium_house_3",
+    "size": [
+      8,
+      7,
+      13
+    ],
+    "entry": [
+      1,
+      1,
+      3
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          1,
+          2
+        ],
+        "name": "spruce_planks"
+      },
+      {
+        "pos": [
+          6,
+          1,
+          8
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          6,
+          2,
+          8
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          2,
+          3,
+          11
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          7,
+          3,
+          3
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          2,
+          4,
+          10
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          6,
+          4,
+          3
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          4,
+          5,
+          7
+        ],
+        "name": "spruce_log"
+      }
+    ],
+    "materialBudget": 144,
+    "blockCount": 288,
+    "cleanup": [
+      {
+        "pos": [
+          1,
+          0,
+          6
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          2,
+          0,
+          0
+        ],
+        "name": "grass_block",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          4
+        ],
+        "name": "cobblestone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          4,
+          0,
+          8
+        ],
+        "name": "cobblestone",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          0,
+          1,
+          6
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  },
+  "village/taiga/houses/taiga_medium_house_4": {
+    "id": "minecraft:village/taiga/houses/taiga_medium_house_4",
+    "size": [
+      9,
+      7,
+      9
+    ],
+    "entry": [
+      4,
+      1,
+      7
+    ],
+    "anchors": [
+      {
+        "pos": [
+          1,
+          1,
+          1
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          7,
+          1,
+          4
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          2,
+          2,
+          1
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          8,
+          2,
+          5
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          5,
+          3,
+          1
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          2,
+          4,
+          7
+        ],
+        "name": "spruce_log"
+      },
+      {
+        "pos": [
+          3,
+          5,
+          3
+        ],
+        "name": "cobblestone"
+      },
+      {
+        "pos": [
+          5,
+          5,
+          6
+        ],
+        "name": "spruce_log"
+      }
+    ],
+    "materialBudget": 116,
+    "blockCount": 232,
+    "cleanup": [
+      {
+        "pos": [
+          3,
+          0,
+          6
+        ],
+        "name": "spruce_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          6,
+          0,
+          4
+        ],
+        "name": "spruce_planks",
+        "why": "jigsaw"
+      },
+      {
+        "pos": [
+          5,
+          1,
+          8
+        ],
+        "name": "air",
+        "why": "jigsaw"
+      }
+    ]
+  }
+}
