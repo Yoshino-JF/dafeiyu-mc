@@ -55,7 +55,13 @@ async function download(url, file, { watch = false, onProgress } = {}) {
   } catch (e) { out.destroy(); throw Error(slow ? '速度太慢' : e.name === 'AbortError' ? '超时' : e.message); }
   finally { clearInterval(timer); }
 }
+/** The real path, also for a path whose last parts do not exist yet (Windows short names such as 9060XT~1 resolve to the long ones). */
+function real(p) { try { return fs.realpathSync.native(p); } catch { const up=path.dirname(p); return up===p?p:path.join(real(up),path.basename(p)); } }
 async function copyTree(source, destination) {
+  // Issue #1: a world folder holding the launcher's own data folder was imported, and the copy went on copying itself, deeper and
+  // deeper, until Windows' path limit - folders too long to delete, and a filling disk. A copy into itself is refused at every level.
+  const s=real(source),d=real(destination);
+  if(s===d||inside(s,d))throw Error('不能把文件夹复制到它自己里面，已中止。');
   noLink(source);
   await fsp.mkdir(destination,{recursive:true});
   for (const entry of await fsp.readdir(source,{withFileTypes:true})) {
@@ -177,6 +183,7 @@ export class WorldManager {
     const source=path.resolve(String(data.source||''));noLink(source);
     if(!exists(path.join(source,'level.dat'))||!fs.statSync(path.join(source,'level.dat')).isFile())throw Error('请选择包含 level.dat 的世界存档文件夹。');
     if(source===this.root||inside(this.dir,source)||inside(this.backupDir,source)||inside(this.archiveDir,source))throw Error('这个存档已由启动器管理，请直接选择或恢复。');
+    if(real(source)===real(this.root)||inside(real(source),real(this.root)))throw Error('这个存档文件夹里放着启动器自己的文件夹，没法导入。请把启动器移到存档文件夹外面，或者把存档复制到别处再导入。');
     const parent=path.dirname(source),prop=path.join(parent,'server.properties');
     if(exists(prop)){const old=properties(fs.readFileSync(prop,'utf8'));if(old['server-port']&&await portOpen(Number(old['server-port'])))throw Error('源服务器仍在运行，请先正常关闭再导入。');}
     const w=await this.create({...data,name:data.name||path.basename(source)});
